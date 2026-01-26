@@ -1141,9 +1141,13 @@ async def generate_session_route(questionnaire: QuestionnaireInput):
     # Store session
     await db.sessions.insert_one(session.dict())
     
-    # Check if we need to set cooldown
+    # Check if we need to set cooldown (real cooldown trigger)
+    # This also auto-resets cooldown_override to False
     if questionnaire.pain == "present" or questionnaire.feeling == "bad" or questionnaire.sleep == "bad":
-        await update_user_state({"cooldown_counter": 2})
+        await update_user_state({
+            "cooldown_counter": 2,
+            "cooldown_override": False  # Auto-reset override when real trigger happens
+        })
     
     return session
 
