@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Platform,
   Modal,
   Pressable,
 } from 'react-native';
@@ -15,9 +14,8 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTrainingStore } from '../src/store/trainingStore';
 
-const BUCKET_ORDER = ['squat', 'pull', 'hinge', 'push'];
-
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const BUCKET_ORDER = ['squat', 'pull', 'hinge', 'push'];
 
 type Feeling = 'bad' | 'ok' | 'great';
 type Sleep = 'bad' | 'good';
@@ -35,8 +33,10 @@ interface QuestionnaireState {
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { setCurrentSession, userState, fetchUserState } = useTrainingStore();
+  const { setCurrentSession, userState, fetchUserState, setOverrideBucket, overrideBucket } = useTrainingStore();
   const [loading, setLoading] = useState(false);
+  const [showCooldownModal, setShowCooldownModal] = useState(false);
+  const [showFocusModal, setShowFocusModal] = useState(false);
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireState>({
     feeling: null,
     sleep: null,
@@ -48,6 +48,8 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchUserState();
   }, []);
+
+  const currentBucket = overrideBucket || userState?.next_priority_bucket || 'squat';
 
   const isComplete = () => {
     return (
@@ -63,14 +65,17 @@ export default function HomeScreen() {
     if (!isComplete()) return;
     setLoading(true);
     try {
+      const payload = {
+        ...questionnaire,
+        override_bucket: overrideBucket || undefined,
+      };
       const response = await fetch(`${BACKEND_URL}/api/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(questionnaire),
+        body: JSON.stringify(payload),
       });
       const session = await response.json();
       setCurrentSession(session);
-      // Save questionnaire for reroll
       useTrainingStore.setState({ lastQuestionnaire: questionnaire });
       router.push('/session');
     } catch (error) {
@@ -78,6 +83,15 @@ export default function HomeScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBucketSelect = (bucket: string) => {
+    if (bucket === userState?.next_priority_bucket) {
+      setOverrideBucket(null); // Reset to auto
+    } else {
+      setOverrideBucket(bucket);
+    }
+    setShowFocusModal(false);
   };
 
   const renderOptionButton = (
@@ -139,16 +153,37 @@ export default function HomeScreen() {
           <View style={styles.statusTag}>
             <Text style={styles.statusTagText}>Week {userState?.week_mode || 'A'}</Text>
           </View>
-          <View style={styles.statusTag}>
-            <Ionicons name="arrow-forward" size={14} color="#888" />
-            <Text style={styles.statusTagText}>
-              {userState?.next_priority_bucket?.toUpperCase() || 'SQUAT'}
+          
+          {/* Focus/Priority Bucket - Tappable */}
+          <TouchableOpacity 
+            style={[
+              styles.statusTag, 
+              styles.focusTag,
+              overrideBucket && styles.focusTagOverride
+            ]}
+            onPress={() => setShowFocusModal(true)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="arrow-forward" size={14} color={overrideBucket ? '#3B82F6' : '#888'} />
+            <Text style={[
+              styles.statusTagText,
+              overrideBucket && styles.focusTagTextOverride
+            ]}>
+              {currentBucket.toUpperCase()}
             </Text>
-          </View>
+            <Ionicons name="chevron-down" size={12} color={overrideBucket ? '#3B82F6' : '#666'} />
+          </TouchableOpacity>
+          
+          {/* Cooldown - Tappable */}
           {(userState?.cooldown_counter || 0) > 0 && (
-            <View style={[styles.statusTag, styles.cooldownTag]}>
-              <Text style={styles.cooldownTagText}>COOLDOWN</Text>
-            </View>
+            <TouchableOpacity 
+              style={[styles.statusTag, styles.cooldownTag]}
+              onPress={() => setShowCooldownModal(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.cooldownTagText}>COOLDOWN ({userState?.cooldown_counter})</Text>
+              <Ionicons name="help-circle" size={14} color="#EF4444" />
+            </TouchableOpacity>
           )}
         </View>
 
@@ -246,6 +281,124 @@ export default function HomeScreen() {
           )}
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Cooldown Explanation Modal */}
+      <Modal
+        visible={showCooldownModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowCooldownModal(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay}
+          onPress={() => setShowCooldownModal(false)}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Ionicons name="snow-outline" size={28} color="#EF4444" />
+              <Text style={styles.modalTitle}>Cooldown Mode</Text>
+            </View>
+            
+            <Text style={styles.modalText}>
+              Your body needs recovery. Cooldown is active for{' '}
+              <Text style={styles.modalHighlight}>{userState?.cooldown_counter} more session(s)</Text>.
+            </Text>
+            
+            <View style={styles.modalSection}>
+              <Text style={styles.modalSubtitle}>What it does:</Text>
+              <Text style={styles.modalBullet}>• Forces EASY day type regardless of how you feel</Text>
+              <Text style={styles.modalBullet}>• Reduces volume and intensity automatically</Text>
+              <Text style={styles.modalBullet}>• No power exercises (swings) allowed</Text>
+            </View>
+            
+            <View style={styles.modalSection}>
+              <Text style={styles.modalSubtitle}>Triggered by:</Text>
+              <Text style={styles.modalBullet}>• Answering "Bad" to feeling or sleep</Text>
+              <Text style={styles.modalBullet}>• Indicating pain is present</Text>
+              <Text style={styles.modalBullet}>• Marking a session as "Not Good"</Text>
+            </View>
+            
+            <Text style={styles.modalFooter}>
+              Completes 1 session = cooldown decreases by 1
+            </Text>
+            
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setShowCooldownModal(false)}
+            >
+              <Text style={styles.modalButtonText}>Got it</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* Focus Selection Modal */}
+      <Modal
+        visible={showFocusModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowFocusModal(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay}
+          onPress={() => setShowFocusModal(false)}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Ionicons name="fitness-outline" size={28} color="#3B82F6" />
+              <Text style={styles.modalTitle}>Today's Focus</Text>
+            </View>
+            
+            <Text style={styles.modalText}>
+              Choose which movement pattern to prioritize. The first exercise will be from this category.
+            </Text>
+            
+            <View style={styles.focusOptions}>
+              {BUCKET_ORDER.map((bucket) => {
+                const isAuto = bucket === userState?.next_priority_bucket;
+                const isSelected = bucket === currentBucket;
+                return (
+                  <TouchableOpacity
+                    key={bucket}
+                    style={[
+                      styles.focusOption,
+                      isSelected && styles.focusOptionSelected,
+                    ]}
+                    onPress={() => handleBucketSelect(bucket)}
+                  >
+                    <Text style={[
+                      styles.focusOptionText,
+                      isSelected && styles.focusOptionTextSelected,
+                    ]}>
+                      {bucket.toUpperCase()}
+                    </Text>
+                    {isAuto && (
+                      <Text style={styles.focusOptionAuto}>auto</Text>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            
+            {overrideBucket && (
+              <TouchableOpacity
+                style={styles.resetButton}
+                onPress={() => {
+                  setOverrideBucket(null);
+                  setShowFocusModal(false);
+                }}
+              >
+                <Ionicons name="refresh" size={16} color="#888" />
+                <Text style={styles.resetButtonText}>Reset to auto rotation</Text>
+              </TouchableOpacity>
+            )}
+            
+            <Text style={styles.modalFooter}>
+              Auto rotation: squat → pull → hinge → push
+            </Text>
+          </View>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -295,6 +448,17 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 12,
     fontWeight: '600',
+  },
+  focusTag: {
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  focusTagOverride: {
+    borderColor: '#3B82F6',
+    backgroundColor: '#3B82F620',
+  },
+  focusTagTextOverride: {
+    color: '#3B82F6',
   },
   cooldownTag: {
     backgroundColor: '#EF444420',
@@ -356,5 +520,116 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    maxWidth: 360,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  modalTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  modalText: {
+    color: '#aaa',
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 16,
+  },
+  modalHighlight: {
+    color: '#EF4444',
+    fontWeight: '600',
+  },
+  modalSection: {
+    marginBottom: 16,
+  },
+  modalSubtitle: {
+    color: '#888',
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  modalBullet: {
+    color: '#ccc',
+    fontSize: 14,
+    lineHeight: 22,
+    paddingLeft: 4,
+  },
+  modalFooter: {
+    color: '#666',
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  modalButton: {
+    backgroundColor: '#333',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  focusOptions: {
+    gap: 10,
+    marginBottom: 16,
+  },
+  focusOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#2a2a2a',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  focusOptionSelected: {
+    borderColor: '#3B82F6',
+    backgroundColor: '#3B82F620',
+  },
+  focusOptionText: {
+    color: '#888',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  focusOptionTextSelected: {
+    color: '#3B82F6',
+  },
+  focusOptionAuto: {
+    color: '#4ADE80',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  resetButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+  },
+  resetButtonText: {
+    color: '#888',
+    fontSize: 14,
   },
 });
