@@ -43,9 +43,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "eas": {
-        "projectId": "daily-training-engine"
-      }
+      "eas": {}
     }
   }
 }
