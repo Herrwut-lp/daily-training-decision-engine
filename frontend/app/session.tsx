@@ -54,7 +54,7 @@ interface Exercise {
 
 export default function SessionScreen() {
   const router = useRouter();
-  const { currentSession, setCurrentSession, lastQuestionnaire } = useTrainingStore();
+  const { currentSession, setCurrentSession, lastQuestionnaire, setOverrideBucket } = useTrainingStore();
   const [loading, setLoading] = useState(false);
   const [swappingId, setSwappingId] = useState<string | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>(currentSession?.exercises || []);
@@ -111,7 +111,6 @@ export default function SessionScreen() {
       });
       const newExercise = await response.json();
       
-      // Update exercises locally
       const updatedExercises = exercises.map((ex) =>
         ex.id === exerciseId ? newExercise : ex
       );
@@ -135,12 +134,34 @@ export default function SessionScreen() {
         }),
       });
       setCurrentSession(null);
+      setOverrideBucket(null); // Clear any manual focus override
       router.replace('/');
     } catch (error) {
       console.error('Error completing session:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDiscard = () => {
+    Alert.alert(
+      'Discard Session?',
+      'This will NOT count as a completed session. Your rotation and cooldown will stay the same.',
+      [
+        {
+          text: 'Keep Session',
+          style: 'cancel',
+        },
+        {
+          text: 'Discard',
+          style: 'destructive',
+          onPress: () => {
+            setCurrentSession(null);
+            router.replace('/');
+          },
+        },
+      ]
+    );
   };
 
   const confirmComplete = () => {
@@ -169,13 +190,15 @@ export default function SessionScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backArrow}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+        <TouchableOpacity onPress={handleDiscard} style={styles.backArrow}>
+          <Ionicons name="close" size={24} color="#888" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>Your Session</Text>
         </View>
-        <View style={{ width: 32 }} />
+        <TouchableOpacity onPress={handleDiscard} style={styles.discardButton}>
+          <Text style={styles.discardText}>Discard</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Session Info Tags */}
@@ -355,6 +378,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  discardButton: {
+    padding: 4,
+  },
+  discardText: {
+    color: '#EF4444',
+    fontSize: 14,
+    fontWeight: '500',
   },
   sessionTags: {
     flexDirection: 'row',
