@@ -1169,12 +1169,20 @@ async def generate_session_route(questionnaire: QuestionnaireInput):
     return session
 
 @api_router.post("/reroll", response_model=SessionOutput)
-async def reroll_session(questionnaire: QuestionnaireInput):
-    """Reroll the session (same rules, different expressions)"""
+async def reroll_session(request: RerollRequest):
+    """Reroll the session - keeps same day_type, equipment, time slot, priority bucket. Only changes exercise expressions."""
     state = await get_user_state()
     benchmarks = await get_benchmarks()
     
-    session = generate_session(questionnaire, state, benchmarks, is_reroll=True)
+    # Generate new session with preserved constraints
+    session = generate_session(
+        request.questionnaire, 
+        state, 
+        benchmarks, 
+        is_reroll=True,
+        forced_day_type=request.preserve_day_type,
+        forced_priority_bucket=request.preserve_priority_bucket
+    )
     
     # Store session (replace latest)
     await db.sessions.delete_one({"id": session.id})
