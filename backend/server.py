@@ -407,6 +407,7 @@ class QuestionnaireInput(BaseModel):
     pain: Literal["none", "present"]
     time_available: Literal["20-30", "30-45", "45-60"]
     equipment: Literal["home", "minimal", "bodyweight"]
+    override_bucket: Optional[str] = None  # Allow manual focus override
 
 class ExerciseOutput(BaseModel):
     id: str
