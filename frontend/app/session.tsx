@@ -153,6 +153,7 @@ export default function SessionScreen() {
       });
       setCurrentSession(null);
       setOverrideBucket(null); // Clear any manual focus override
+      await fetchUserState(); // Refresh user state for home screen
       router.replace('/');
     } catch (error) {
       console.error('Error completing session:', error);
