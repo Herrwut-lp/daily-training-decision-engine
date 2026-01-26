@@ -251,7 +251,11 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Prescription Types Feature"
+    - "Protocol Popup Modal"
+    - "Cooldown Override Toggle"
+    - "Reroll Preserves Constraints"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -261,3 +265,5 @@ agent_communication:
     message: "MVP implementation complete. All core features implemented including exercise library, session generator with rotation rules, day type determination, power gating, and full state management. Frontend has questionnaire, session display with swap/reroll/done, and settings screens. Please test the backend APIs."
   - agent: "testing"
     message: "✅ BACKEND TESTING COMPLETE: All 13 backend API tests passed successfully. Comprehensive testing performed on all endpoints including session generation, state management, exercise swapping, session completion, benchmarks, and settings. All key functionality verified: day type determination based on questionnaire, equipment filtering, priority bucket rotation, cooldown management, power gating, and feedback handling. Backend APIs are fully functional and ready for production use."
+  - agent: "main"
+    message: "Implementing Prescription Types & Cooldown Override features. Backend changes: 1) Added cooldown_override field to UserState, 2) Modified determine_day_type to respect override, 3) Auto-reset override on real cooldown triggers (pain/bad feeling/bad sleep/not_good feedback), 4) Updated reroll endpoint to preserve day_type and priority_bucket. Frontend changes: 1) Updated Zustand store with new Exercise interface and cooldown_override, 2) Added override toggle in cooldown modal, 3) Session screen already displays correct fields based on prescription_type. Please test the new backend endpoints."
