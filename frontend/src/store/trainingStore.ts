@@ -47,9 +47,11 @@ interface TrainingStore {
   currentSession: Session | null;
   userState: UserState | null;
   lastQuestionnaire: Questionnaire | null;
+  overrideBucket: string | null;
   setCurrentSession: (session: Session | null) => void;
   setUserState: (state: UserState) => void;
   setLastQuestionnaire: (q: Questionnaire) => void;
+  setOverrideBucket: (bucket: string | null) => void;
   fetchUserState: () => Promise<void>;
 }
 
@@ -57,10 +59,12 @@ export const useTrainingStore = create<TrainingStore>((set) => ({
   currentSession: null,
   userState: null,
   lastQuestionnaire: null,
+  overrideBucket: null,
   
   setCurrentSession: (session) => set({ currentSession: session }),
   setUserState: (state) => set({ userState: state }),
   setLastQuestionnaire: (q) => set({ lastQuestionnaire: q }),
+  setOverrideBucket: (bucket) => set({ overrideBucket: bucket }),
   
   fetchUserState: async () => {
     try {
