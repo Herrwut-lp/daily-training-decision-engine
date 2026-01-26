@@ -560,11 +560,28 @@ class APITester:
             self.log_test("Minimal Equipment KB Filter", False, f"Exception: {str(e)}")
             return False
             
+    def reset_state(self):
+        """Reset state for clean testing"""
+        try:
+            response = self.session.post(f"{BACKEND_URL}/reset")
+            if response.status_code == 200:
+                print("🔄 State reset for clean testing")
+                return True
+            else:
+                print(f"⚠️  Could not reset state: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"⚠️  Could not reset state: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run all API tests"""
         print(f"🧪 Starting Backend API Tests for Daily Training Decision Engine")
         print(f"🔗 Backend URL: {BACKEND_URL}")
         print("=" * 80)
+        
+        # Reset state for clean testing
+        self.reset_state()
         
         # Test order matters for some tests (generate before swap/complete)
         tests = [
