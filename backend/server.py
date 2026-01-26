@@ -748,6 +748,12 @@ class SwapRequest(BaseModel):
     exercise_id: str
     equipment: str
 
+class RerollRequest(BaseModel):
+    """Request to reroll a session while keeping same constraints"""
+    questionnaire: QuestionnaireInput
+    preserve_day_type: str  # The day_type from the original session
+    preserve_priority_bucket: str  # The priority_bucket from the original session
+
 # ===========================
 # HELPER FUNCTIONS
 # ===========================
