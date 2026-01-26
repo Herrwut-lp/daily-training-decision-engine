@@ -968,13 +968,24 @@ def build_exercise_output(ex: dict, protocol: dict, load: str, notes: str = "") 
     
     return output
 
-def generate_session(questionnaire: QuestionnaireInput, state: UserState, benchmarks: Benchmarks, is_reroll: bool = False) -> SessionOutput:
+def generate_session(questionnaire: QuestionnaireInput, state: UserState, benchmarks: Benchmarks, is_reroll: bool = False, forced_day_type: str = None, forced_priority_bucket: str = None) -> SessionOutput:
     """Generate a training session"""
-    day_type = determine_day_type(questionnaire, state)
+    # Use forced values if provided (for reroll), otherwise determine normally
+    if forced_day_type:
+        day_type = forced_day_type
+    else:
+        day_type = determine_day_type(questionnaire, state)
+    
     equipment = questionnaire.equipment
     week_mode = state.week_mode
-    # Use override bucket if provided, otherwise use state
-    priority_bucket = questionnaire.override_bucket if questionnaire.override_bucket else state.next_priority_bucket
+    
+    # Use forced priority bucket if provided (for reroll), then override, then state
+    if forced_priority_bucket:
+        priority_bucket = forced_priority_bucket
+    elif questionnaire.override_bucket:
+        priority_bucket = questionnaire.override_bucket
+    else:
+        priority_bucket = state.next_priority_bucket
     
     # Determine number of exercises based on time
     time_slot = questionnaire.time_available
