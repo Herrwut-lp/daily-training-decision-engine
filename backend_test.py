@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Dict, Any, List
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://decide-fit.preview.emergentagent.com/api"
+BACKEND_URL = "https://fitness-planner-138.preview.emergentagent.com/api"
 
 class APITester:
     def __init__(self):
