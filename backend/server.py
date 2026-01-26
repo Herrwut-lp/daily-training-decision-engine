@@ -806,8 +806,11 @@ def determine_day_type(questionnaire: QuestionnaireInput, state: UserState) -> s
         return "easy"
     if questionnaire.sleep == "bad":
         return "easy"
-    if state.cooldown_counter > 0:
+    
+    # Cooldown check - bypassed if override is ON
+    if state.cooldown_counter > 0 and not state.cooldown_override:
         return "easy"
+    
     if state.last_hard_day:
         return "easy"
     
