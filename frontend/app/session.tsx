@@ -61,7 +61,7 @@ interface Exercise {
 
 export default function SessionScreen() {
   const router = useRouter();
-  const { currentSession, setCurrentSession, lastQuestionnaire, setOverrideBucket } = useTrainingStore();
+  const { currentSession, setCurrentSession, lastQuestionnaire, setOverrideBucket, fetchUserState } = useTrainingStore();
   const [loading, setLoading] = useState(false);
   const [swappingId, setSwappingId] = useState<string | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>(currentSession?.exercises || []);
