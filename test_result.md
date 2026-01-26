@@ -123,11 +123,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Generates sessions based on questionnaire with day type determination, priority bucket selection, equipment filtering"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/generate works correctly. Bad feeling/sleep/pain returns day_type 'easy' and sets cooldown=2. Great feeling returns medium/hard. Equipment filtering works (bodyweight shows only bodyweight exercises, minimal shows KB exercises). Priority bucket determines first exercise category. Power gating logic implemented correctly."
 
   - task: "State Management API"
     implemented: true
