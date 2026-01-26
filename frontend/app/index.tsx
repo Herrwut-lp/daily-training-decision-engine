@@ -700,4 +700,67 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 14,
   },
+  // Override toggle styles
+  overrideToggle: {
+    backgroundColor: '#2a2a2a',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  overrideToggleOn: {
+    backgroundColor: '#F59E0B15',
+    borderColor: '#F59E0B',
+  },
+  overrideToggleContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  overrideToggleTextContainer: {
+    flex: 1,
+  },
+  overrideToggleTitle: {
+    color: '#888',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  overrideToggleTitleOn: {
+    color: '#F59E0B',
+  },
+  overrideToggleSubtext: {
+    color: '#666',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  overrideIndicator: {
+    width: 44,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#333',
+    padding: 2,
+    justifyContent: 'center',
+  },
+  overrideIndicatorOn: {
+    backgroundColor: '#F59E0B40',
+  },
+  overrideIndicatorDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#666',
+  },
+  overrideIndicatorDotOn: {
+    backgroundColor: '#F59E0B',
+    alignSelf: 'flex-end',
+  },
+  modalWarning: {
+    color: '#F59E0B',
+    fontSize: 12,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 8,
+  },
 });
