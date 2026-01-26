@@ -33,7 +33,7 @@ interface QuestionnaireState {
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { setCurrentSession, userState, fetchUserState, setOverrideBucket, overrideBucket } = useTrainingStore();
+  const { setCurrentSession, userState, fetchUserState, setOverrideBucket, overrideBucket, toggleCooldownOverride } = useTrainingStore();
   const [loading, setLoading] = useState(false);
   const [showCooldownModal, setShowCooldownModal] = useState(false);
   const [showFocusModal, setShowFocusModal] = useState(false);
