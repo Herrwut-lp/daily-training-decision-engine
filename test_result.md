@@ -296,11 +296,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Prescription Types Feature"
-    - "Protocol Popup Modal"
-    - "Cooldown Override Toggle"
-    - "Reroll Preserves Constraints"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -312,3 +308,5 @@ agent_communication:
     message: "✅ BACKEND TESTING COMPLETE: All 13 backend API tests passed successfully. Comprehensive testing performed on all endpoints including session generation, state management, exercise swapping, session completion, benchmarks, and settings. All key functionality verified: day type determination based on questionnaire, equipment filtering, priority bucket rotation, cooldown management, power gating, and feedback handling. Backend APIs are fully functional and ready for production use."
   - agent: "main"
     message: "Implementing Prescription Types & Cooldown Override features. Backend changes: 1) Added cooldown_override field to UserState, 2) Modified determine_day_type to respect override, 3) Auto-reset override on real cooldown triggers (pain/bad feeling/bad sleep/not_good feedback), 4) Updated reroll endpoint to preserve day_type and priority_bucket. Frontend changes: 1) Updated Zustand store with new Exercise interface and cooldown_override, 2) Added override toggle in cooldown modal, 3) Session screen already displays correct fields based on prescription_type. Please test the new backend endpoints."
+  - agent: "testing"
+    message: "✅ NEW FEATURES TESTING COMPLETE: All 19 tests passed (100% success rate). Prescription Types & Protocol System: GET /api/protocols returns 19 protocols, exercises have correct prescription_type and output fields (reps for KB_STRENGTH/BW_DYNAMIC/POWER_SWING, hold_time for ISOMETRIC_HOLD, time for CARRY_TIME/CRAWL_TIME). Cooldown Override Toggle: PUT/GET /api/settings works, override bypasses cooldown when ON, auto-resets on bad conditions/feedback. Reroll Preserves Constraints: New reroll format preserves day_type and priority_bucket while changing exercises. All backend features are working correctly."
