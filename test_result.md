@@ -207,6 +207,42 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: PUT /api/settings updates week_mode (A/B) and power_frequency (weekly/fortnightly) correctly. Settings persist in user state."
 
+  - task: "Prescription Types & Protocol System"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented prescription types (KB_STRENGTH, BW_DYNAMIC, ISOMETRIC_HOLD, CARRY_TIME, CRAWL_TIME, POWER_SWING) with deterministic protocol assignment. Each exercise has prescription_type. Session output includes correct fields based on type (reps for strength/dynamic, hold_time for isometric, time for carry/crawl)."
+
+  - task: "Cooldown Override Toggle"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added cooldown_override field to UserState. When ON, determine_day_type bypasses cooldown_counter for day type decisions. Auto-resets to OFF when real cooldown triggers happen (pain present, bad feeling/sleep, not_good feedback). PUT /api/settings endpoint updated to accept cooldown_override."
+
+  - task: "Reroll Preserves Constraints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Reroll endpoint now accepts preserve_day_type and preserve_priority_bucket. Same day_type, equipment, time slot, and priority bucket are maintained. Only exercise expressions change."
+
 frontend:
   - task: "Questionnaire Screen"
     implemented: true
