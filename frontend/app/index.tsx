@@ -7,11 +7,15 @@ import {
   ScrollView,
   ActivityIndicator,
   Platform,
+  Modal,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTrainingStore } from '../src/store/trainingStore';
+
+const BUCKET_ORDER = ['squat', 'pull', 'hinge', 'push'];
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
