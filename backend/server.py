@@ -27,6 +27,260 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 # ===========================
+# PRESCRIPTION TYPES
+# ===========================
+
+PRESCRIPTION_TYPES = {
+    "KB_STRENGTH": {
+        "id": "KB_STRENGTH",
+        "name": "Kettlebell Strength",
+        "output_fields": ["sets", "reps", "rest"],
+        "description": "Standard kettlebell strength work with ladders or sets across"
+    },
+    "BW_DYNAMIC": {
+        "id": "BW_DYNAMIC",
+        "name": "Bodyweight Dynamic",
+        "output_fields": ["sets", "reps", "rest", "tempo"],
+        "description": "Dynamic bodyweight movements with rep targets"
+    },
+    "ISOMETRIC_HOLD": {
+        "id": "ISOMETRIC_HOLD",
+        "name": "Isometric Hold",
+        "output_fields": ["sets", "hold_time", "rest"],
+        "description": "Static holds for time, no reps"
+    },
+    "CARRY_TIME": {
+        "id": "CARRY_TIME",
+        "name": "Carry (Time-based)",
+        "output_fields": ["sets", "time", "rest", "load"],
+        "description": "Loaded carries measured by time"
+    },
+    "CRAWL_TIME": {
+        "id": "CRAWL_TIME",
+        "name": "Crawl (Time-based)",
+        "output_fields": ["sets", "time", "rest"],
+        "description": "Crawling patterns measured by time"
+    },
+    "POWER_SWING": {
+        "id": "POWER_SWING",
+        "name": "Power (Swings)",
+        "output_fields": ["sets", "reps", "rest"],
+        "description": "Explosive power work, gated by recovery"
+    }
+}
+
+# ===========================
+# PROTOCOL DEFINITIONS
+# ===========================
+
+PROTOCOL_LIBRARY = {
+    # KB_STRENGTH Protocols
+    "ladder_123": {
+        "id": "ladder_123",
+        "name": "Ladder 1-2-3",
+        "prescription_type": "KB_STRENGTH",
+        "description_short": "Perform reps 1, then 2, then 3, rest 60-90s between rungs. That's one ladder. Do 3-5 ladders total.",
+        "example": "Rung 1 → rest → Rung 2 → rest → Rung 3 → rest → repeat",
+        "sets": "3-5 ladders",
+        "reps": "1, 2, 3",
+        "rest": "60-90s"
+    },
+    "ladder_12345": {
+        "id": "ladder_12345",
+        "name": "Ladder 1-2-3-4-5",
+        "prescription_type": "KB_STRENGTH",
+        "description_short": "Perform reps 1, 2, 3, 4, 5 with rest 60-90s between rungs. Do 2-3 ladders total. High volume day.",
+        "example": "1-2-3-4-5 = 15 reps per ladder",
+        "sets": "2-3 ladders",
+        "reps": "1, 2, 3, 4, 5",
+        "rest": "60-90s"
+    },
+    "sets_across_kb": {
+        "id": "sets_across_kb",
+        "name": "Sets Across",
+        "prescription_type": "KB_STRENGTH",
+        "description_short": "Same reps each set. Focus on crisp, quality reps. Stop 1 rep before you grind.",
+        "example": "5 sets of 5 reps, same weight",
+        "sets": "3-5",
+        "reps": "5",
+        "rest": "60-90s"
+    },
+    "density_block": {
+        "id": "density_block",
+        "name": "Density Block",
+        "prescription_type": "KB_STRENGTH",
+        "description_short": "Accumulate crisp sets for a fixed time. Rest as needed. Stop before form breaks.",
+        "example": "10 minutes, sets of 3-5, rest as needed",
+        "sets": "AMRAP",
+        "reps": "3-5",
+        "rest": "10 min total"
+    },
+    
+    # BW_DYNAMIC Protocols
+    "sets_across_bw": {
+        "id": "sets_across_bw",
+        "name": "Sets Across",
+        "prescription_type": "BW_DYNAMIC",
+        "description_short": "Same reps each set. Quality over quantity. Full range of motion.",
+        "example": "4 sets of 8 reps",
+        "sets": "3-5",
+        "reps": "5-8",
+        "rest": "60-90s"
+    },
+    "total_reps_target": {
+        "id": "total_reps_target",
+        "name": "Total Reps Target",
+        "prescription_type": "BW_DYNAMIC",
+        "description_short": "Accumulate the target number of quality reps in as many sets as needed. Rest as needed.",
+        "example": "Get 50 total push-ups, however you want",
+        "sets": "As needed",
+        "reps": "Total 30-50",
+        "rest": "As needed"
+    },
+    "tempo_sets": {
+        "id": "tempo_sets",
+        "name": "Tempo Sets",
+        "prescription_type": "BW_DYNAMIC",
+        "description_short": "Control the tempo: 3 seconds down, 1 second pause, up crisp. Builds strength and control.",
+        "example": "3-1-1 tempo: 3s down, 1s pause, 1s up",
+        "sets": "3-5",
+        "reps": "5-8",
+        "rest": "60-90s",
+        "tempo": "3-1-1"
+    },
+    
+    # ISOMETRIC_HOLD Protocols
+    "hardstyle_hold": {
+        "id": "hardstyle_hold",
+        "name": "Hardstyle Hold",
+        "prescription_type": "ISOMETRIC_HOLD",
+        "description_short": "Maximum tension for short duration. Squeeze everything: glutes, abs, lats. Quality over duration.",
+        "example": "7-15 seconds of maximum effort",
+        "sets": "4-6",
+        "hold_time": "7-15s",
+        "rest": "45-75s"
+    },
+    "submax_hold": {
+        "id": "submax_hold",
+        "name": "Submax Hold",
+        "prescription_type": "ISOMETRIC_HOLD",
+        "description_short": "Moderate tension, longer duration. Focus on maintaining perfect position.",
+        "example": "15-30 seconds at 70% effort",
+        "sets": "3-5",
+        "hold_time": "15-30s",
+        "rest": "60s"
+    },
+    
+    # CARRY_TIME Protocols
+    "carry_time_standard": {
+        "id": "carry_time_standard",
+        "name": "Timed Carry",
+        "prescription_type": "CARRY_TIME",
+        "description_short": "Carry for time, not distance. Walk slow and controlled. Maintain tall posture throughout.",
+        "example": "Walk for 30-60 seconds per set",
+        "sets": "3-6",
+        "time": "30-60s",
+        "rest": "60-90s"
+    },
+    "carry_time_heavy": {
+        "id": "carry_time_heavy",
+        "name": "Heavy Carry",
+        "prescription_type": "CARRY_TIME",
+        "description_short": "Heavier load, shorter duration. More sets. Challenge your grip and core.",
+        "example": "Heavy for 20-30 seconds, more sets",
+        "sets": "5-8",
+        "time": "20-30s",
+        "rest": "60-90s"
+    },
+    
+    # CRAWL_TIME Protocols
+    "crawl_time_standard": {
+        "id": "crawl_time_standard",
+        "name": "Timed Crawl",
+        "prescription_type": "CRAWL_TIME",
+        "description_short": "Crawl for time, not distance. Stay low, move smooth. Opposite hand and foot together.",
+        "example": "Crawl for 20-40 seconds per set",
+        "sets": "3-6",
+        "time": "20-40s",
+        "rest": "40-60s"
+    },
+    
+    # POWER_SWING Protocols
+    "swing_emom": {
+        "id": "swing_emom",
+        "name": "EMOM Swings",
+        "prescription_type": "POWER_SWING",
+        "description_short": "Every Minute on the Minute. Do your swings, rest the remainder. Crisp and explosive every rep.",
+        "example": "10 swings at top of each minute for 10 mins",
+        "sets": "10-15 min",
+        "reps": "10",
+        "rest": "Remainder of minute"
+    },
+    "swing_sets_across": {
+        "id": "swing_sets_across",
+        "name": "Swing Sets",
+        "prescription_type": "POWER_SWING",
+        "description_short": "Traditional sets with fixed rest. Every rep should be explosive. Stop if power drops.",
+        "example": "6-10 sets of 10-15 reps",
+        "sets": "6-10",
+        "reps": "10-15",
+        "rest": "45-75s"
+    },
+    
+    # EASY day protocols (apply to any type)
+    "light_practice_kb": {
+        "id": "light_practice_kb",
+        "name": "Light Practice",
+        "prescription_type": "KB_STRENGTH",
+        "description_short": "Light weight, low volume. Focus on perfect technique. This is a recovery session.",
+        "example": "Light bell, crisp reps, plenty of rest",
+        "sets": "2-3",
+        "reps": "3-5",
+        "rest": "90s+"
+    },
+    "light_practice_bw": {
+        "id": "light_practice_bw",
+        "name": "Light Practice",
+        "prescription_type": "BW_DYNAMIC",
+        "description_short": "Easy bodyweight work. Focus on movement quality. This is a recovery session.",
+        "example": "Slow, controlled reps",
+        "sets": "2-3",
+        "reps": "5-8",
+        "rest": "As needed"
+    },
+    "light_hold": {
+        "id": "light_hold",
+        "name": "Light Hold",
+        "prescription_type": "ISOMETRIC_HOLD",
+        "description_short": "Easy holds. Moderate tension. Recovery work.",
+        "example": "Comfortable holds, breathing controlled",
+        "sets": "2-3",
+        "hold_time": "10-20s",
+        "rest": "60s"
+    },
+    "light_carry": {
+        "id": "light_carry",
+        "name": "Light Carry",
+        "prescription_type": "CARRY_TIME",
+        "description_short": "Easy carries. Light weight, shorter duration. Recovery work.",
+        "example": "Light load, relaxed walk",
+        "sets": "2-3",
+        "time": "20-30s",
+        "rest": "60s"
+    },
+    "light_crawl": {
+        "id": "light_crawl",
+        "name": "Light Crawl",
+        "prescription_type": "CRAWL_TIME",
+        "description_short": "Easy crawling. Focus on smooth movement. Recovery work.",
+        "example": "Slow and controlled",
+        "sets": "2-3",
+        "time": "15-20s",
+        "rest": "45s"
+    }
+}
+
+# ===========================
 # EXERCISE LIBRARY (LOCKED)
 # ===========================
 
@@ -38,7 +292,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home", "minimal"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "KB_STRENGTH"
     },
     "single_kb_front_squat": {
         "id": "single_kb_front_squat",
@@ -46,7 +301,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home", "minimal"],
         "bilateral": True,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "KB_STRENGTH"
     },
     "double_kb_front_squat": {
         "id": "double_kb_front_squat",
@@ -54,7 +310,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home"],
         "bilateral": True,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "KB_STRENGTH"
     },
     "kb_split_squat": {
         "id": "kb_split_squat",
@@ -62,7 +319,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "KB_STRENGTH"
     },
     "kb_rfess": {
         "id": "kb_rfess",
@@ -70,7 +328,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home"],
         "bilateral": False,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "KB_STRENGTH"
     },
     "atg_split_squat": {
         "id": "atg_split_squat",
@@ -78,7 +337,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "BW_DYNAMIC"
     },
     "rear_leg_assisted_shrimp": {
         "id": "rear_leg_assisted_shrimp",
@@ -86,7 +346,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "BW_DYNAMIC"
     },
     "kb_lunge": {
         "id": "kb_lunge",
@@ -94,7 +355,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "KB_STRENGTH"
     },
     "bw_lunge": {
         "id": "bw_lunge",
@@ -102,7 +364,8 @@ EXERCISE_LIBRARY = {
         "category": "squat",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "BW_DYNAMIC"
     },
     
     # HINGE category
@@ -112,7 +375,8 @@ EXERCISE_LIBRARY = {
         "category": "hinge",
         "equipment": ["home", "minimal"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "KB_STRENGTH"
     },
     "kb_suitcase_deadlift": {
         "id": "kb_suitcase_deadlift",
@@ -120,7 +384,8 @@ EXERCISE_LIBRARY = {
         "category": "hinge",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "KB_STRENGTH"
     },
     "single_leg_kb_deadlift": {
         "id": "single_leg_kb_deadlift",
@@ -128,7 +393,8 @@ EXERCISE_LIBRARY = {
         "category": "hinge",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "KB_STRENGTH"
     },
     "hip_thrust": {
         "id": "hip_thrust",
@@ -136,7 +402,8 @@ EXERCISE_LIBRARY = {
         "category": "hinge",
         "equipment": ["home"],
         "bilateral": True,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "KB_STRENGTH"
     },
     "single_leg_hip_thrust": {
         "id": "single_leg_hip_thrust",
@@ -144,7 +411,8 @@ EXERCISE_LIBRARY = {
         "category": "hinge",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "BW_DYNAMIC"
     },
     "band_hip_thrust": {
         "id": "band_hip_thrust",
@@ -152,7 +420,8 @@ EXERCISE_LIBRARY = {
         "category": "hinge",
         "equipment": ["home"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "BW_DYNAMIC"
     },
     "kb_swing": {
         "id": "kb_swing",
@@ -161,7 +430,8 @@ EXERCISE_LIBRARY = {
         "equipment": ["home", "minimal"],
         "bilateral": True,
         "is_anchor": False,
-        "is_power": True
+        "is_power": True,
+        "prescription_type": "POWER_SWING"
     },
     
     # PUSH category
@@ -171,7 +441,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": True,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "BW_DYNAMIC"
     },
     "kb_press_single": {
         "id": "kb_press_single",
@@ -179,7 +450,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "KB_STRENGTH"
     },
     "kb_press_double": {
         "id": "kb_press_double",
@@ -187,7 +459,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home"],
         "bilateral": True,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "KB_STRENGTH"
     },
     "floor_press_single": {
         "id": "floor_press_single",
@@ -195,7 +468,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "KB_STRENGTH"
     },
     "floor_press_double": {
         "id": "floor_press_double",
@@ -203,7 +477,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "KB_STRENGTH"
     },
     "diamond_pushup": {
         "id": "diamond_pushup",
@@ -211,7 +486,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "BW_DYNAMIC"
     },
     "deficit_pushup": {
         "id": "deficit_pushup",
@@ -219,7 +495,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "BW_DYNAMIC"
     },
     "sfg_plank": {
         "id": "sfg_plank",
@@ -227,7 +504,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "ISOMETRIC_HOLD"
     },
     "pushup_plank": {
         "id": "pushup_plank",
@@ -235,7 +513,8 @@ EXERCISE_LIBRARY = {
         "category": "push",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "ISOMETRIC_HOLD"
     },
     
     # PULL category
@@ -245,7 +524,8 @@ EXERCISE_LIBRARY = {
         "category": "pull",
         "equipment": ["home"],
         "bilateral": True,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "BW_DYNAMIC"
     },
     "chinup": {
         "id": "chinup",
@@ -253,7 +533,8 @@ EXERCISE_LIBRARY = {
         "category": "pull",
         "equipment": ["home"],
         "bilateral": True,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "BW_DYNAMIC"
     },
     "australian_pullup": {
         "id": "australian_pullup",
@@ -261,7 +542,8 @@ EXERCISE_LIBRARY = {
         "category": "pull",
         "equipment": ["home"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "BW_DYNAMIC"
     },
     "kb_row": {
         "id": "kb_row",
@@ -269,7 +551,8 @@ EXERCISE_LIBRARY = {
         "category": "pull",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "KB_STRENGTH"
     },
     "bw_batwing_hold": {
         "id": "bw_batwing_hold",
@@ -277,7 +560,8 @@ EXERCISE_LIBRARY = {
         "category": "pull",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "ISOMETRIC_HOLD"
     },
     
     # CARRY and LOCOMOTION
@@ -287,7 +571,8 @@ EXERCISE_LIBRARY = {
         "category": "carry",
         "equipment": ["home", "minimal"],
         "bilateral": True,
-        "is_anchor": True
+        "is_anchor": True,
+        "prescription_type": "CARRY_TIME"
     },
     "suitcase_carry": {
         "id": "suitcase_carry",
@@ -295,7 +580,8 @@ EXERCISE_LIBRARY = {
         "category": "carry",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CARRY_TIME"
     },
     "rack_carry": {
         "id": "rack_carry",
@@ -303,7 +589,8 @@ EXERCISE_LIBRARY = {
         "category": "carry",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CARRY_TIME"
     },
     "overhead_carry": {
         "id": "overhead_carry",
@@ -311,7 +598,8 @@ EXERCISE_LIBRARY = {
         "category": "carry",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CARRY_TIME"
     },
     "bottom_up_carry": {
         "id": "bottom_up_carry",
@@ -319,7 +607,8 @@ EXERCISE_LIBRARY = {
         "category": "carry",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CARRY_TIME"
     },
     "stationary_march_goblet": {
         "id": "stationary_march_goblet",
@@ -327,7 +616,8 @@ EXERCISE_LIBRARY = {
         "category": "carry",
         "equipment": ["home", "minimal"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CARRY_TIME"
     },
     "stationary_march_rack": {
         "id": "stationary_march_rack",
@@ -335,7 +625,8 @@ EXERCISE_LIBRARY = {
         "category": "carry",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CARRY_TIME"
     },
     "stationary_march_overhead": {
         "id": "stationary_march_overhead",
@@ -343,7 +634,8 @@ EXERCISE_LIBRARY = {
         "category": "carry",
         "equipment": ["home", "minimal"],
         "bilateral": False,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CARRY_TIME"
     },
     "bear_crawl": {
         "id": "bear_crawl",
@@ -351,7 +643,8 @@ EXERCISE_LIBRARY = {
         "category": "crawl",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CRAWL_TIME"
     },
     "tiger_crawl": {
         "id": "tiger_crawl",
@@ -359,43 +652,13 @@ EXERCISE_LIBRARY = {
         "category": "crawl",
         "equipment": ["home", "minimal", "bodyweight"],
         "bilateral": True,
-        "is_anchor": False
+        "is_anchor": False,
+        "prescription_type": "CRAWL_TIME"
     },
 }
 
 # Priority bucket rotation order
 BUCKET_ROTATION = ["squat", "pull", "hinge", "push"]
-
-# Default protocols by exercise type
-PROTOCOLS = {
-    "kettlebell_strength": [
-        {"name": "Ladder 1-2-3", "sets": "3-5 ladders", "reps": "1,2,3", "rest": "60-90s"},
-        {"name": "Ladder 1-2-3-4-5", "sets": "2-3 ladders", "reps": "1,2,3,4,5", "rest": "60-90s"},
-        {"name": "Sets Across", "sets": "3-5", "reps": "5", "rest": "60-90s"},
-        {"name": "Density Block", "sets": "AMRAP", "reps": "3-5", "rest": "10 min total"},
-    ],
-    "bodyweight_strength": [
-        {"name": "Sets Across", "sets": "3-5", "reps": "5-8", "rest": "60-90s"},
-        {"name": "Ladder 1-2-3", "sets": "3-5 ladders", "reps": "1,2,3", "rest": "60s"},
-        {"name": "Total Reps Target", "sets": "As needed", "reps": "Total 25-50", "rest": "As needed"},
-    ],
-    "carry": [
-        {"name": "Distance", "sets": "3-4", "reps": "20-40m", "rest": "60s"},
-        {"name": "Time", "sets": "3-4", "reps": "30-60s", "rest": "60s"},
-    ],
-    "crawl": [
-        {"name": "Distance", "sets": "3-5", "reps": "10-20m", "rest": "30-60s"},
-        {"name": "Time", "sets": "3-5", "reps": "20-30s", "rest": "30-60s"},
-    ],
-    "power": [
-        {"name": "On the Minute", "sets": "10-15", "reps": "10", "rest": "Top of min"},
-        {"name": "Sets Across", "sets": "5-10", "reps": "10-15", "rest": "60s"},
-    ],
-    "easy": [
-        {"name": "Light Practice", "sets": "2-3", "reps": "3-5", "rest": "90s"},
-        {"name": "Movement Flow", "sets": "2-3", "reps": "5", "rest": "As needed"},
-    ],
-}
 
 # ===========================
 # PYDANTIC MODELS
@@ -413,11 +676,17 @@ class ExerciseOutput(BaseModel):
     id: str
     name: str
     category: str
+    prescription_type: str
     load_level: str
-    protocol: str
+    protocol_id: str
+    protocol_name: str
+    protocol_description: str
     sets: str
-    reps: str
+    reps: Optional[str] = None  # For KB_STRENGTH, BW_DYNAMIC, POWER_SWING
+    hold_time: Optional[str] = None  # For ISOMETRIC_HOLD
+    time: Optional[str] = None  # For CARRY_TIME, CRAWL_TIME
     rest: str
+    tempo: Optional[str] = None  # For tempo work
     notes: str = ""
 
 class SessionOutput(BaseModel):
@@ -602,31 +871,52 @@ def select_exercise_from_bucket(bucket: str, equipment: str, week_mode: str, exc
     
     return random.choice(exercises) if exercises else None
 
-def get_protocol_for_exercise(ex: dict, day_type: str, equipment: str) -> dict:
-    """Get appropriate protocol for an exercise"""
-    category = ex["category"]
+def get_protocols_for_prescription_type(prescription_type: str, day_type: str) -> List[dict]:
+    """Get protocols that match a prescription type and day type"""
+    protocols = []
+    for proto_id, proto in PROTOCOL_LIBRARY.items():
+        if proto["prescription_type"] == prescription_type:
+            # Easy day filter
+            if day_type == "easy" and "light" in proto_id.lower():
+                protocols.append(proto)
+            elif day_type != "easy" and "light" not in proto_id.lower():
+                protocols.append(proto)
     
-    if day_type == "easy":
-        protocols = PROTOCOLS["easy"]
-    elif category == "carry":
-        protocols = PROTOCOLS["carry"]
-    elif category == "crawl":
-        protocols = PROTOCOLS["crawl"]
-    elif ex.get("is_power"):
-        protocols = PROTOCOLS["power"]
-    elif equipment == "bodyweight" or category in ["push"] and ex["id"] in ["pushup", "diamond_pushup", "deficit_pushup"]:
-        protocols = PROTOCOLS["bodyweight_strength"]
-    else:
-        protocols = PROTOCOLS["kettlebell_strength"]
+    # Fallback: if no protocols found for easy day, use regular ones
+    if not protocols:
+        for proto_id, proto in PROTOCOL_LIBRARY.items():
+            if proto["prescription_type"] == prescription_type:
+                protocols.append(proto)
+    
+    return protocols
+
+def get_protocol_for_exercise(ex: dict, day_type: str) -> dict:
+    """Get appropriate protocol for an exercise based on its prescription type"""
+    prescription_type = ex.get("prescription_type", "KB_STRENGTH")
+    protocols = get_protocols_for_prescription_type(prescription_type, day_type)
+    
+    if not protocols:
+        # Ultimate fallback
+        return PROTOCOL_LIBRARY["sets_across_kb"]
     
     return random.choice(protocols)
 
 def get_load_level(ex: dict, day_type: str, benchmarks: Benchmarks, equipment: str) -> str:
     """Determine load level for an exercise"""
-    if equipment == "bodyweight":
+    prescription_type = ex.get("prescription_type", "KB_STRENGTH")
+    
+    # Bodyweight exercises
+    if prescription_type in ["BW_DYNAMIC", "ISOMETRIC_HOLD", "CRAWL_TIME"]:
         if day_type == "easy":
-            return "Slow tempo"
-        return "Standard"
+            return "Light effort"
+        elif day_type == "medium":
+            return "Moderate effort"
+        else:
+            return "Max effort"
+    
+    # Loaded exercises
+    if equipment == "bodyweight":
+        return "Bodyweight"
     
     if day_type == "easy":
         return "Light (60-70%)"
@@ -634,6 +924,38 @@ def get_load_level(ex: dict, day_type: str, benchmarks: Benchmarks, equipment: s
         return "Moderate (75-85%)"
     else:
         return "Heavy (85-95%)"
+
+def build_exercise_output(ex: dict, protocol: dict, load: str, notes: str = "") -> ExerciseOutput:
+    """Build ExerciseOutput with correct fields based on prescription type"""
+    prescription_type = ex.get("prescription_type", "KB_STRENGTH")
+    
+    output = ExerciseOutput(
+        id=ex["id"],
+        name=ex["name"],
+        category=ex["category"],
+        prescription_type=prescription_type,
+        load_level=load,
+        protocol_id=protocol["id"],
+        protocol_name=protocol["name"],
+        protocol_description=protocol["description_short"],
+        sets=protocol.get("sets", "3-5"),
+        rest=protocol.get("rest", "60s"),
+        notes=notes
+    )
+    
+    # Set the appropriate field based on prescription type
+    if prescription_type in ["KB_STRENGTH", "BW_DYNAMIC", "POWER_SWING"]:
+        output.reps = protocol.get("reps", "5")
+    elif prescription_type == "ISOMETRIC_HOLD":
+        output.hold_time = protocol.get("hold_time", "10-20s")
+    elif prescription_type in ["CARRY_TIME", "CRAWL_TIME"]:
+        output.time = protocol.get("time", "30-60s")
+    
+    # Add tempo if present
+    if "tempo" in protocol:
+        output.tempo = protocol["tempo"]
+    
+    return output
 
 def generate_session(questionnaire: QuestionnaireInput, state: UserState, benchmarks: Benchmarks, is_reroll: bool = False) -> SessionOutput:
     """Generate a training session"""
@@ -667,17 +989,10 @@ def generate_session(questionnaire: QuestionnaireInput, state: UserState, benchm
     # 1. Priority bucket exercise (first)
     primary_ex = select_exercise_from_bucket(priority_bucket, equipment, week_mode, used_ids, prefer_anchor=True)
     if primary_ex:
-        protocol = get_protocol_for_exercise(primary_ex, day_type, equipment)
+        protocol = get_protocol_for_exercise(primary_ex, day_type)
         load = get_load_level(primary_ex, day_type, benchmarks, equipment)
-        exercises.append(ExerciseOutput(
-            id=primary_ex["id"],
-            name=primary_ex["name"],
-            category=primary_ex["category"],
-            load_level=load,
-            protocol=protocol["name"],
-            sets=protocol["sets"],
-            reps=protocol["reps"],
-            rest=protocol["rest"],
+        exercises.append(build_exercise_output(
+            primary_ex, protocol, load, 
             notes="Priority" if primary_ex.get("is_anchor") else ""
         ))
         used_ids.append(primary_ex["id"])
@@ -696,54 +1011,26 @@ def generate_session(questionnaire: QuestionnaireInput, state: UserState, benchm
                 if not ex:
                     continue
             
-            protocol = get_protocol_for_exercise(ex, day_type, equipment)
+            protocol = get_protocol_for_exercise(ex, day_type)
             load = get_load_level(ex, day_type, benchmarks, equipment)
-            exercises.append(ExerciseOutput(
-                id=ex["id"],
-                name=ex["name"],
-                category=ex["category"],
-                load_level=load,
-                protocol=protocol["name"],
-                sets=protocol["sets"],
-                reps=protocol["reps"],
-                rest=protocol["rest"]
-            ))
+            exercises.append(build_exercise_output(ex, protocol, load))
             used_ids.append(ex["id"])
     
     # 3. Carry (if time allows)
     if include_carry and len(exercises) < max_exercises:
         carry_ex = select_exercise_from_bucket("carry", equipment, week_mode, used_ids)
         if carry_ex:
-            protocol = get_protocol_for_exercise(carry_ex, day_type, equipment)
-            exercises.append(ExerciseOutput(
-                id=carry_ex["id"],
-                name=carry_ex["name"],
-                category=carry_ex["category"],
-                load_level=get_load_level(carry_ex, day_type, benchmarks, equipment),
-                protocol=protocol["name"],
-                sets=protocol["sets"],
-                reps=protocol["reps"],
-                rest=protocol["rest"],
-                notes="Finisher"
-            ))
+            protocol = get_protocol_for_exercise(carry_ex, day_type)
+            load = get_load_level(carry_ex, day_type, benchmarks, equipment)
+            exercises.append(build_exercise_output(carry_ex, protocol, load, notes="Finisher"))
             used_ids.append(carry_ex["id"])
     
     # 4. Crawl (if time allows and 45-60 min)
     if include_crawl and len(exercises) < max_exercises:
         crawl_ex = select_exercise_from_bucket("crawl", equipment, week_mode, used_ids)
         if crawl_ex:
-            protocol = get_protocol_for_exercise(crawl_ex, day_type, equipment)
-            exercises.append(ExerciseOutput(
-                id=crawl_ex["id"],
-                name=crawl_ex["name"],
-                category=crawl_ex["category"],
-                load_level="Bodyweight",
-                protocol=protocol["name"],
-                sets=protocol["sets"],
-                reps=protocol["reps"],
-                rest=protocol["rest"],
-                notes="Support"
-            ))
+            protocol = get_protocol_for_exercise(crawl_ex, day_type)
+            exercises.append(build_exercise_output(crawl_ex, protocol, "Bodyweight", notes="Support"))
     
     return SessionOutput(
         day_type=day_type,
@@ -771,6 +1058,18 @@ async def get_exercises():
 async def get_exercises_by_category(category: str):
     """Get exercises by category"""
     return [ex for ex in EXERCISE_LIBRARY.values() if ex["category"] == category]
+
+@api_router.get("/protocols")
+async def get_protocols():
+    """Get all protocol definitions"""
+    return list(PROTOCOL_LIBRARY.values())
+
+@api_router.get("/protocols/{protocol_id}")
+async def get_protocol(protocol_id: str):
+    """Get a specific protocol by ID"""
+    if protocol_id not in PROTOCOL_LIBRARY:
+        raise HTTPException(status_code=404, detail="Protocol not found")
+    return PROTOCOL_LIBRARY[protocol_id]
 
 @api_router.get("/state")
 async def get_state():
@@ -877,19 +1176,10 @@ async def swap_exercise(request: SwapRequest):
     
     new_ex = random.choice(alternatives)
     benchmarks = await get_benchmarks()
-    protocol = get_protocol_for_exercise(new_ex, "medium", request.equipment)
+    protocol = get_protocol_for_exercise(new_ex, "medium")
     load = get_load_level(new_ex, "medium", benchmarks, request.equipment)
     
-    return ExerciseOutput(
-        id=new_ex["id"],
-        name=new_ex["name"],
-        category=new_ex["category"],
-        load_level=load,
-        protocol=protocol["name"],
-        sets=protocol["sets"],
-        reps=protocol["reps"],
-        rest=protocol["rest"]
-    )
+    return build_exercise_output(new_ex, protocol, load)
 
 @api_router.post("/complete")
 async def complete_session(feedback: SessionFeedback):
