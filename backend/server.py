@@ -1210,6 +1210,7 @@ async def complete_session(feedback: SessionFeedback):
     # Handle feedback
     if feedback.feedback == "not_good":
         updates["cooldown_counter"] = 2
+        updates["cooldown_override"] = False  # Auto-reset override when not_good feedback
     elif state.cooldown_counter > 0:
         updates["cooldown_counter"] = state.cooldown_counter - 1
     
