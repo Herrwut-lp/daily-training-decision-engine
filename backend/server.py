@@ -705,6 +705,7 @@ class UserState(BaseModel):
     week_mode: Literal["A", "B"] = "A"
     week_mode_last_changed: datetime = Field(default_factory=datetime.utcnow)
     cooldown_counter: int = 0
+    cooldown_override: bool = False  # When True, bypass cooldown for day type decisions
     power_last_used: Optional[datetime] = None
     last_hard_day: bool = False
     last_session_exercises: List[str] = []
