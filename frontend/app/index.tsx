@@ -177,12 +177,25 @@ export default function HomeScreen() {
           {/* Cooldown - Tappable */}
           {(userState?.cooldown_counter || 0) > 0 && (
             <TouchableOpacity 
-              style={[styles.statusTag, styles.cooldownTag]}
+              style={[
+                styles.statusTag, 
+                styles.cooldownTag,
+                userState?.cooldown_override && styles.cooldownTagOverride
+              ]}
               onPress={() => setShowCooldownModal(true)}
               activeOpacity={0.7}
             >
-              <Text style={styles.cooldownTagText}>COOLDOWN ({userState?.cooldown_counter})</Text>
-              <Ionicons name="help-circle" size={14} color="#EF4444" />
+              <Text style={[
+                styles.cooldownTagText,
+                userState?.cooldown_override && styles.cooldownTagTextOverride
+              ]}>
+                {userState?.cooldown_override ? 'OVERRIDE ON' : `COOLDOWN (${userState?.cooldown_counter})`}
+              </Text>
+              <Ionicons 
+                name={userState?.cooldown_override ? "flash" : "help-circle"} 
+                size={14} 
+                color={userState?.cooldown_override ? "#F59E0B" : "#EF4444"} 
+              />
             </TouchableOpacity>
           )}
         </View>
