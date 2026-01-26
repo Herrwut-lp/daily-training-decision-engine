@@ -138,11 +138,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Handles priority bucket rotation, cooldown counter, week mode, power gating"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/state returns correct user state with priority_bucket, week_mode, cooldown_counter, power_frequency. PUT /api/settings updates week_mode and power_frequency correctly. State persistence working."
 
   - task: "Swap Exercise API"
     implemented: true
