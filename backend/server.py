@@ -1101,7 +1101,7 @@ async def update_benchmarks_route(updates: BenchmarksUpdate):
 
 @api_router.put("/settings")
 async def update_settings(updates: SettingsUpdate):
-    """Update user settings (week mode, power frequency)"""
+    """Update user settings (week mode, power frequency, cooldown override)"""
     state = await get_user_state()
     update_dict = {}
     
@@ -1111,6 +1111,9 @@ async def update_settings(updates: SettingsUpdate):
     
     if updates.power_frequency is not None:
         update_dict["power_frequency"] = updates.power_frequency
+    
+    if updates.cooldown_override is not None:
+        update_dict["cooldown_override"] = updates.cooldown_override
     
     if update_dict:
         await update_user_state(update_dict)
