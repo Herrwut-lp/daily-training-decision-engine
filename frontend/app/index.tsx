@@ -317,6 +317,48 @@ export default function HomeScreen() {
               <Text style={styles.modalHighlight}>{userState?.cooldown_counter} more session(s)</Text>.
             </Text>
             
+            {/* Override Toggle */}
+            <TouchableOpacity
+              style={[
+                styles.overrideToggle,
+                userState?.cooldown_override && styles.overrideToggleOn
+              ]}
+              onPress={() => {
+                toggleCooldownOverride();
+              }}
+            >
+              <View style={styles.overrideToggleContent}>
+                <Ionicons 
+                  name={userState?.cooldown_override ? "flash" : "flash-outline"} 
+                  size={20} 
+                  color={userState?.cooldown_override ? "#F59E0B" : "#888"} 
+                />
+                <View style={styles.overrideToggleTextContainer}>
+                  <Text style={[
+                    styles.overrideToggleTitle,
+                    userState?.cooldown_override && styles.overrideToggleTitleOn
+                  ]}>
+                    Override: {userState?.cooldown_override ? 'ON' : 'OFF'}
+                  </Text>
+                  <Text style={styles.overrideToggleSubtext}>
+                    {userState?.cooldown_override 
+                      ? 'Day type ignores cooldown counter'
+                      : 'Tap to bypass cooldown for testing'
+                    }
+                  </Text>
+                </View>
+                <View style={[
+                  styles.overrideIndicator,
+                  userState?.cooldown_override && styles.overrideIndicatorOn
+                ]}>
+                  <View style={[
+                    styles.overrideIndicatorDot,
+                    userState?.cooldown_override && styles.overrideIndicatorDotOn
+                  ]} />
+                </View>
+              </View>
+            </TouchableOpacity>
+            
             <View style={styles.modalSection}>
               <Text style={styles.modalSubtitle}>What it does:</Text>
               <Text style={styles.modalBullet}>• Forces EASY day type regardless of how you feel</Text>
@@ -330,6 +372,12 @@ export default function HomeScreen() {
               <Text style={styles.modalBullet}>• Indicating pain is present</Text>
               <Text style={styles.modalBullet}>• Marking a session as "Not Good"</Text>
             </View>
+            
+            {userState?.cooldown_override && (
+              <Text style={styles.modalWarning}>
+                Override auto-resets when a real cooldown trigger happens.
+              </Text>
+            )}
             
             <Text style={styles.modalFooter}>
               Completes 1 session = cooldown decreases by 1
