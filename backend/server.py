@@ -737,6 +737,7 @@ class BenchmarksUpdate(BaseModel):
 class SettingsUpdate(BaseModel):
     week_mode: Optional[Literal["A", "B"]] = None
     power_frequency: Optional[Literal["weekly", "fortnightly"]] = None
+    cooldown_override: Optional[bool] = None
 
 class SessionFeedback(BaseModel):
     session_id: str
