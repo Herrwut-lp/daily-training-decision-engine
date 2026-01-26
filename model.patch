@@ -1,131 +1,218 @@
 diff --git a/model.patch b/model.patch
-index bf6f6e6..e69de29 100644
+index bc4bef4..e69de29 100644
 --- a/model.patch
 +++ b/model.patch
-@@ -1,126 +0,0 @@
+@@ -1,131 +0,0 @@
 -diff --git a/model.patch b/model.patch
--index ac172ef..e69de29 100644
+-index bf6f6e6..e69de29 100644
 ---- a/model.patch
 -+++ b/model.patch
--@@ -1,121 +0,0 @@
---diff --git a/test_result.md b/test_result.md
---index da7cdc1..4688e4f 100644
------ a/test_result.md
---+++ b/test_result.md
---@@ -123,11 +123,14 @@ backend:
---     file: "/app/backend/server.py"
---     stuck_count: 0
---     priority: "high"
----    needs_retesting: true
---+    needs_retesting: false
---     status_history:
---       - working: true
---         agent: "main"
---         comment: "Generates sessions based on questionnaire with day type determination, priority bucket selection, equipment filtering"
---+      - working: true
---+        agent: "testing"
---+        comment: "✅ TESTED: POST /api/generate works correctly. Bad feeling/sleep/pain returns day_type 'easy' and sets cooldown=2. Great feeling returns medium/hard. Equipment filtering works (bodyweight shows only bodyweight exercises, minimal shows KB exercises). Priority bucket determines first exercise category. Power gating logic implemented correctly."
--- 
---   - task: "State Management API"
---     implemented: true
---@@ -135,11 +138,14 @@ backend:
---     file: "/app/backend/server.py"
---     stuck_count: 0
---     priority: "high"
----    needs_retesting: true
---+    needs_retesting: false
---     status_history:
---       - working: true
---         agent: "main"
---         comment: "Handles priority bucket rotation, cooldown counter, week mode, power gating"
---+      - working: true
---+        agent: "testing"
---+        comment: "✅ TESTED: GET /api/state returns correct user state with priority_bucket, week_mode, cooldown_counter, power_frequency. PUT /api/settings updates week_mode and power_frequency correctly. State persistence working."
--- 
---   - task: "Swap Exercise API"
---     implemented: true
---@@ -147,11 +153,14 @@ backend:
---     file: "/app/backend/server.py"
---     stuck_count: 0
---     priority: "medium"
----    needs_retesting: true
---+    needs_retesting: false
---     status_history:
---       - working: true
---         agent: "main"
---         comment: "Swaps exercise within same bucket using allowed alternatives"
---+      - working: true
---+        agent: "testing"
---+        comment: "✅ TESTED: POST /api/swap correctly swaps exercises within same category. Returns different exercise from same bucket with proper protocol and load level."
--- 
---   - task: "Complete Session API"
---     implemented: true
---@@ -159,11 +168,14 @@ backend:
---     file: "/app/backend/server.py"
---     stuck_count: 0
---     priority: "high"
----    needs_retesting: true
---+    needs_retesting: false
---     status_history:
---       - working: true
---         agent: "main"
---         comment: "Advances rotation, handles feedback, decrements cooldown"
---+      - working: true
---+        agent: "testing"
---+        comment: "✅ TESTED: POST /api/complete advances priority bucket rotation correctly (squat->pull->hinge->push). 'not_good' feedback sets cooldown_counter=2. 'good' feedback decrements cooldown. Session completion tracking works."
--- 
---   - task: "Benchmarks API"
---     implemented: true
---@@ -171,11 +183,14 @@ backend:
---     file: "/app/backend/server.py"
---     stuck_count: 0
---     priority: "low"
----    needs_retesting: true
---+    needs_retesting: false
---     status_history:
---       - working: true
---         agent: "main"
---         comment: "GET/PUT endpoints for user benchmarks"
---+      - working: true
---+        agent: "testing"
---+        comment: "✅ TESTED: GET /api/benchmarks returns benchmark structure. PUT /api/benchmarks updates user benchmarks correctly (press_bell_kg, pushup_max, pullup_max, available_bells_minimal)."
--- 
---   - task: "Settings API"
---     implemented: true
---@@ -183,11 +198,14 @@ backend:
---     file: "/app/backend/server.py"
---     stuck_count: 0
---     priority: "low"
----    needs_retesting: true
---+    needs_retesting: false
---     status_history:
---       - working: true
---         agent: "main"
---         comment: "Updates week mode and power frequency settings"
---+      - working: true
---+        agent: "testing"
---+        comment: "✅ TESTED: PUT /api/settings updates week_mode (A/B) and power_frequency (weekly/fortnightly) correctly. Settings persist in user state."
--- 
--- frontend:
---   - task: "Questionnaire Screen"
---@@ -233,14 +251,13 @@ metadata:
---   run_ui: false
--- 
--- test_plan:
----  current_focus:
----    - "Session Generator API"
----    - "State Management API"
----    - "Complete Session API"
---+  current_focus: []
---   stuck_tasks: []
---   test_all: false
---   test_priority: "high_first"
--- 
--- agent_communication:
---   - agent: "main"
----    message: "MVP implementation complete. All core features implemented including exercise library, session generator with rotation rules, day type determination, power gating, and full state management. Frontend has questionnaire, session display with swap/reroll/done, and settings screens. Please test the backend APIs."
---\ No newline at end of file
---+    message: "MVP implementation complete. All core features implemented including exercise library, session generator with rotation rules, day type determination, power gating, and full state management. Frontend has questionnaire, session display with swap/reroll/done, and settings screens. Please test the backend APIs."
---+  - agent: "testing"
---+    message: "✅ BACKEND TESTING COMPLETE: All 13 backend API tests passed successfully. Comprehensive testing performed on all endpoints including session generation, state management, exercise swapping, session completion, benchmarks, and settings. All key functionality verified: day type determination based on questionnaire, equipment filtering, priority bucket rotation, cooldown management, power gating, and feedback handling. Backend APIs are fully functional and ready for production use."
---\ No newline at end of file
+-@@ -1,126 +0,0 @@
+--diff --git a/model.patch b/model.patch
+--index ac172ef..e69de29 100644
+----- a/model.patch
+--+++ b/model.patch
+--@@ -1,121 +0,0 @@
+---diff --git a/test_result.md b/test_result.md
+---index da7cdc1..4688e4f 100644
+------ a/test_result.md
+---+++ b/test_result.md
+---@@ -123,11 +123,14 @@ backend:
+---     file: "/app/backend/server.py"
+---     stuck_count: 0
+---     priority: "high"
+----    needs_retesting: true
+---+    needs_retesting: false
+---     status_history:
+---       - working: true
+---         agent: "main"
+---         comment: "Generates sessions based on questionnaire with day type determination, priority bucket selection, equipment filtering"
+---+      - working: true
+---+        agent: "testing"
+---+        comment: "✅ TESTED: POST /api/generate works correctly. Bad feeling/sleep/pain returns day_type 'easy' and sets cooldown=2. Great feeling returns medium/hard. Equipment filtering works (bodyweight shows only bodyweight exercises, minimal shows KB exercises). Priority bucket determines first exercise category. Power gating logic implemented correctly."
+--- 
+---   - task: "State Management API"
+---     implemented: true
+---@@ -135,11 +138,14 @@ backend:
+---     file: "/app/backend/server.py"
+---     stuck_count: 0
+---     priority: "high"
+----    needs_retesting: true
+---+    needs_retesting: false
+---     status_history:
+---       - working: true
+---         agent: "main"
+---         comment: "Handles priority bucket rotation, cooldown counter, week mode, power gating"
+---+      - working: true
+---+        agent: "testing"
+---+        comment: "✅ TESTED: GET /api/state returns correct user state with priority_bucket, week_mode, cooldown_counter, power_frequency. PUT /api/settings updates week_mode and power_frequency correctly. State persistence working."
+--- 
+---   - task: "Swap Exercise API"
+---     implemented: true
+---@@ -147,11 +153,14 @@ backend:
+---     file: "/app/backend/server.py"
+---     stuck_count: 0
+---     priority: "medium"
+----    needs_retesting: true
+---+    needs_retesting: false
+---     status_history:
+---       - working: true
+---         agent: "main"
+---         comment: "Swaps exercise within same bucket using allowed alternatives"
+---+      - working: true
+---+        agent: "testing"
+---+        comment: "✅ TESTED: POST /api/swap correctly swaps exercises within same category. Returns different exercise from same bucket with proper protocol and load level."
+--- 
+---   - task: "Complete Session API"
+---     implemented: true
+---@@ -159,11 +168,14 @@ backend:
+---     file: "/app/backend/server.py"
+---     stuck_count: 0
+---     priority: "high"
+----    needs_retesting: true
+---+    needs_retesting: false
+---     status_history:
+---       - working: true
+---         agent: "main"
+---         comment: "Advances rotation, handles feedback, decrements cooldown"
+---+      - working: true
+---+        agent: "testing"
+---+        comment: "✅ TESTED: POST /api/complete advances priority bucket rotation correctly (squat->pull->hinge->push). 'not_good' feedback sets cooldown_counter=2. 'good' feedback decrements cooldown. Session completion tracking works."
+--- 
+---   - task: "Benchmarks API"
+---     implemented: true
+---@@ -171,11 +183,14 @@ backend:
+---     file: "/app/backend/server.py"
+---     stuck_count: 0
+---     priority: "low"
+----    needs_retesting: true
+---+    needs_retesting: false
+---     status_history:
+---       - working: true
+---         agent: "main"
+---         comment: "GET/PUT endpoints for user benchmarks"
+---+      - working: true
+---+        agent: "testing"
+---+        comment: "✅ TESTED: GET /api/benchmarks returns benchmark structure. PUT /api/benchmarks updates user benchmarks correctly (press_bell_kg, pushup_max, pullup_max, available_bells_minimal)."
+--- 
+---   - task: "Settings API"
+---     implemented: true
+---@@ -183,11 +198,14 @@ backend:
+---     file: "/app/backend/server.py"
+---     stuck_count: 0
+---     priority: "low"
+----    needs_retesting: true
+---+    needs_retesting: false
+---     status_history:
+---       - working: true
+---         agent: "main"
+---         comment: "Updates week mode and power frequency settings"
+---+      - working: true
+---+        agent: "testing"
+---+        comment: "✅ TESTED: PUT /api/settings updates week_mode (A/B) and power_frequency (weekly/fortnightly) correctly. Settings persist in user state."
+--- 
+--- frontend:
+---   - task: "Questionnaire Screen"
+---@@ -233,14 +251,13 @@ metadata:
+---   run_ui: false
+--- 
+--- test_plan:
+----  current_focus:
+----    - "Session Generator API"
+----    - "State Management API"
+----    - "Complete Session API"
+---+  current_focus: []
+---   stuck_tasks: []
+---   test_all: false
+---   test_priority: "high_first"
+--- 
+--- agent_communication:
+---   - agent: "main"
+----    message: "MVP implementation complete. All core features implemented including exercise library, session generator with rotation rules, day type determination, power gating, and full state management. Frontend has questionnaire, session display with swap/reroll/done, and settings screens. Please test the backend APIs."
+---\ No newline at end of file
+---+    message: "MVP implementation complete. All core features implemented including exercise library, session generator with rotation rules, day type determination, power gating, and full state management. Frontend has questionnaire, session display with swap/reroll/done, and settings screens. Please test the backend APIs."
+---+  - agent: "testing"
+---+    message: "✅ BACKEND TESTING COMPLETE: All 13 backend API tests passed successfully. Comprehensive testing performed on all endpoints including session generation, state management, exercise swapping, session completion, benchmarks, and settings. All key functionality verified: day type determination based on questionnaire, equipment filtering, priority bucket rotation, cooldown management, power gating, and feedback handling. Backend APIs are fully functional and ready for production use."
+---\ No newline at end of file
+diff --git a/test_result.md b/test_result.md
+index c879123..78731ce 100644
+--- a/test_result.md
++++ b/test_result.md
+@@ -209,39 +209,48 @@ backend:
+ 
+   - task: "Prescription Types & Protocol System"
+     implemented: true
+-    working: "NA"
++    working: true
+     file: "/app/backend/server.py"
+     stuck_count: 0
+     priority: "high"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: "NA"
+         agent: "main"
+         comment: "Implemented prescription types (KB_STRENGTH, BW_DYNAMIC, ISOMETRIC_HOLD, CARRY_TIME, CRAWL_TIME, POWER_SWING) with deterministic protocol assignment. Each exercise has prescription_type. Session output includes correct fields based on type (reps for strength/dynamic, hold_time for isometric, time for carry/crawl)."
++      - working: true
++        agent: "testing"
++        comment: "✅ TESTED: GET /api/protocols returns 19 protocols with required fields (id, name, prescription_type, description_short). POST /api/generate returns exercises with prescription_type field and correct output fields: KB_STRENGTH/BW_DYNAMIC/POWER_SWING have reps, ISOMETRIC_HOLD has hold_time (not reps), CARRY_TIME/CRAWL_TIME have time (not reps). Protocol fields (protocol_id, protocol_name, protocol_description) are present in all exercises."
+ 
+   - task: "Cooldown Override Toggle"
+     implemented: true
+-    working: "NA"
++    working: true
+     file: "/app/backend/server.py"
+     stuck_count: 0
+     priority: "high"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: "NA"
+         agent: "main"
+         comment: "Added cooldown_override field to UserState. When ON, determine_day_type bypasses cooldown_counter for day type decisions. Auto-resets to OFF when real cooldown triggers happen (pain present, bad feeling/sleep, not_good feedback). PUT /api/settings endpoint updated to accept cooldown_override."
++      - working: true
++        agent: "testing"
++        comment: "✅ TESTED: PUT /api/settings accepts cooldown_override true/false. GET /api/state returns cooldown_override field. When cooldown_counter > 0 AND cooldown_override: false → day_type is 'easy'. When cooldown_counter > 0 AND cooldown_override: true → day_type can be 'medium' or 'hard' (with great feeling/sleep/no pain). Auto-reset works: cooldown_override resets to false when POST /api/generate with bad conditions OR POST /api/complete with 'not_good' feedback."
+ 
+   - task: "Reroll Preserves Constraints"
+     implemented: true
+-    working: "NA"
++    working: true
+     file: "/app/backend/server.py"
+     stuck_count: 0
+     priority: "high"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: "NA"
+         agent: "main"
+         comment: "Reroll endpoint now accepts preserve_day_type and preserve_priority_bucket. Same day_type, equipment, time slot, and priority bucket are maintained. Only exercise expressions change."
++      - working: true
++        agent: "testing"
++        comment: "✅ TESTED: POST /api/reroll with new request format (questionnaire, preserve_day_type, preserve_priority_bucket) works correctly. Rerolled session preserves same day_type and priority_bucket as specified. Exercises change between rerolls while maintaining constraints. Multiple rerolls produce exercise variations as expected."
+ 
+ frontend:
+   - task: "Questionnaire Screen"
+@@ -287,11 +296,7 @@ metadata:
+   run_ui: false
+ 
+ test_plan:
+-  current_focus:
+-    - "Prescription Types Feature"
+-    - "Protocol Popup Modal"
+-    - "Cooldown Override Toggle"
+-    - "Reroll Preserves Constraints"
++  current_focus: []
+   stuck_tasks: []
+   test_all: false
+   test_priority: "high_first"
+@@ -302,4 +307,6 @@ agent_communication:
+   - agent: "testing"
+     message: "✅ BACKEND TESTING COMPLETE: All 13 backend API tests passed successfully. Comprehensive testing performed on all endpoints including session generation, state management, exercise swapping, session completion, benchmarks, and settings. All key functionality verified: day type determination based on questionnaire, equipment filtering, priority bucket rotation, cooldown management, power gating, and feedback handling. Backend APIs are fully functional and ready for production use."
+   - agent: "main"
+-    message: "Implementing Prescription Types & Cooldown Override features. Backend changes: 1) Added cooldown_override field to UserState, 2) Modified determine_day_type to respect override, 3) Auto-reset override on real cooldown triggers (pain/bad feeling/bad sleep/not_good feedback), 4) Updated reroll endpoint to preserve day_type and priority_bucket. Frontend changes: 1) Updated Zustand store with new Exercise interface and cooldown_override, 2) Added override toggle in cooldown modal, 3) Session screen already displays correct fields based on prescription_type. Please test the new backend endpoints."
+\ No newline at end of file
++    message: "Implementing Prescription Types & Cooldown Override features. Backend changes: 1) Added cooldown_override field to UserState, 2) Modified determine_day_type to respect override, 3) Auto-reset override on real cooldown triggers (pain/bad feeling/bad sleep/not_good feedback), 4) Updated reroll endpoint to preserve day_type and priority_bucket. Frontend changes: 1) Updated Zustand store with new Exercise interface and cooldown_override, 2) Added override toggle in cooldown modal, 3) Session screen already displays correct fields based on prescription_type. Please test the new backend endpoints."
++  - agent: "testing"
++    message: "✅ NEW FEATURES TESTING COMPLETE: All 19 tests passed (100% success rate). Prescription Types & Protocol System: GET /api/protocols returns 19 protocols, exercises have correct prescription_type and output fields (reps for KB_STRENGTH/BW_DYNAMIC/POWER_SWING, hold_time for ISOMETRIC_HOLD, time for CARRY_TIME/CRAWL_TIME). Cooldown Override Toggle: PUT/GET /api/settings works, override bypasses cooldown when ON, auto-resets on bad conditions/feedback. Reroll Preserves Constraints: New reroll format preserves day_type and priority_bucket while changing exercises. All backend features are working correctly."
+\ No newline at end of file
