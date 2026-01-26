@@ -1143,12 +1143,12 @@ async def generate_session_route(questionnaire: QuestionnaireInput):
     state = await get_user_state()
     benchmarks = await get_benchmarks()
     
-    # Auto-toggle week mode every 7 days
-    days_since_mode_change = (datetime.utcnow() - state.week_mode_last_changed).days
-    if days_since_mode_change >= 7:
-        new_mode = "B" if state.week_mode == "A" else "A"
+    # Auto-set week mode based on calendar week (odd = A, even = B)
+    current_week = datetime.utcnow().isocalendar()[1]  # ISO week number (1-53)
+    expected_mode = "A" if current_week % 2 == 1 else "B"
+    if state.week_mode != expected_mode:
         await update_user_state({
-            "week_mode": new_mode,
+            "week_mode": expected_mode,
             "week_mode_last_changed": datetime.utcnow()
         })
         state = await get_user_state()
