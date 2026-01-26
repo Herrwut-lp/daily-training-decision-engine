@@ -526,10 +526,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#EF4444',
   },
+  cooldownTagOverride: {
+    backgroundColor: '#F59E0B20',
+    borderColor: '#F59E0B',
+  },
   cooldownTagText: {
     color: '#EF4444',
     fontSize: 12,
     fontWeight: '600',
+  },
+  cooldownTagTextOverride: {
+    color: '#F59E0B',
   },
   questionSection: {
     marginBottom: 24,
