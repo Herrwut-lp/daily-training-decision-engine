@@ -640,7 +640,8 @@ def generate_session(questionnaire: QuestionnaireInput, state: UserState, benchm
     day_type = determine_day_type(questionnaire, state)
     equipment = questionnaire.equipment
     week_mode = state.week_mode
-    priority_bucket = state.next_priority_bucket
+    # Use override bucket if provided, otherwise use state
+    priority_bucket = questionnaire.override_bucket if questionnaire.override_bucket else state.next_priority_bucket
     
     # Determine number of exercises based on time
     time_slot = questionnaire.time_available
