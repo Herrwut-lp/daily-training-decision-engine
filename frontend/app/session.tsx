@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -44,11 +45,17 @@ interface Exercise {
   id: string;
   name: string;
   category: string;
+  prescription_type: string;
   load_level: string;
-  protocol: string;
+  protocol_id: string;
+  protocol_name: string;
+  protocol_description: string;
   sets: string;
-  reps: string;
+  reps?: string;
+  hold_time?: string;
+  time?: string;
   rest: string;
+  tempo?: string;
   notes?: string;
 }
 
@@ -58,6 +65,13 @@ export default function SessionScreen() {
   const [loading, setLoading] = useState(false);
   const [swappingId, setSwappingId] = useState<string | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>(currentSession?.exercises || []);
+  
+  // Protocol modal state
+  const [protocolModalVisible, setProtocolModalVisible] = useState(false);
+  const [selectedProtocol, setSelectedProtocol] = useState<{
+    name: string;
+    description: string;
+  } | null>(null);
 
   if (!currentSession) {
     return (
@@ -186,8 +200,69 @@ export default function SessionScreen() {
     );
   };
 
+  const showProtocolInfo = (exercise: Exercise) => {
+    setSelectedProtocol({
+      name: exercise.protocol_name,
+      description: exercise.protocol_description,
+    });
+    setProtocolModalVisible(true);
+  };
+
+  // Helper to get the appropriate volume field based on prescription type
+  const getVolumeDisplay = (exercise: Exercise) => {
+    const prescriptionType = exercise.prescription_type;
+    
+    if (prescriptionType === 'ISOMETRIC_HOLD') {
+      return {
+        label: 'Hold',
+        value: exercise.hold_time || '10-20s',
+      };
+    } else if (prescriptionType === 'CARRY_TIME' || prescriptionType === 'CRAWL_TIME') {
+      return {
+        label: 'Time',
+        value: exercise.time || '30-60s',
+      };
+    } else {
+      // KB_STRENGTH, BW_DYNAMIC, POWER_SWING
+      return {
+        label: 'Reps',
+        value: exercise.reps || '5',
+      };
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      {/* Protocol Info Modal */}
+      <Modal
+        visible={protocolModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setProtocolModalVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setProtocolModalVisible(false)}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Ionicons name="information-circle" size={24} color="#4ADE80" />
+              <Text style={styles.modalTitle}>{selectedProtocol?.name}</Text>
+            </View>
+            <Text style={styles.modalDescription}>
+              {selectedProtocol?.description}
+            </Text>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setProtocolModalVisible(false)}
+            >
+              <Text style={styles.modalCloseText}>Got it</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleDiscard} style={styles.backArrow}>
@@ -238,71 +313,91 @@ export default function SessionScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {exercises.map((exercise, index) => (
-          <View key={`${exercise.id}-${index}`} style={styles.exerciseCard}>
-            <View style={styles.exerciseHeader}>
-              <View
-                style={[
-                  styles.categoryBadge,
-                  { backgroundColor: getCategoryColor(exercise.category) + '20' },
-                ]}
-              >
-                <Text
+        {exercises.map((exercise, index) => {
+          const volumeDisplay = getVolumeDisplay(exercise);
+          
+          return (
+            <View key={`${exercise.id}-${index}`} style={styles.exerciseCard}>
+              <View style={styles.exerciseHeader}>
+                <View
                   style={[
-                    styles.categoryText,
-                    { color: getCategoryColor(exercise.category) },
+                    styles.categoryBadge,
+                    { backgroundColor: getCategoryColor(exercise.category) + '20' },
                   ]}
                 >
-                  {exercise.category.toUpperCase()}
-                </Text>
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      { color: getCategoryColor(exercise.category) },
+                    ]}
+                  >
+                    {exercise.category.toUpperCase()}
+                  </Text>
+                </View>
+                {exercise.notes && (
+                  <View style={styles.noteBadge}>
+                    <Text style={styles.noteText}>{exercise.notes}</Text>
+                  </View>
+                )}
+                <TouchableOpacity
+                  style={styles.swapButton}
+                  onPress={() => handleSwap(exercise.id)}
+                  disabled={swappingId === exercise.id}
+                >
+                  {swappingId === exercise.id ? (
+                    <ActivityIndicator size="small" color="#888" />
+                  ) : (
+                    <Ionicons name="swap-horizontal" size={20} color="#888" />
+                  )}
+                </TouchableOpacity>
               </View>
-              {exercise.notes && (
-                <View style={styles.noteBadge}>
-                  <Text style={styles.noteText}>{exercise.notes}</Text>
+
+              <Text style={styles.exerciseName}>{exercise.name}</Text>
+
+              <View style={styles.exerciseDetails}>
+                <View style={styles.detailItem}>
+                  <Text style={styles.detailLabel}>Load</Text>
+                  <Text style={styles.detailValue}>{exercise.load_level}</Text>
+                </View>
+                <TouchableOpacity 
+                  style={styles.detailItem}
+                  onPress={() => showProtocolInfo(exercise)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.protocolLabelRow}>
+                    <Text style={styles.detailLabel}>Protocol</Text>
+                    <Ionicons name="information-circle-outline" size={12} color="#4ADE80" />
+                  </View>
+                  <Text style={[styles.detailValue, styles.protocolValue]}>
+                    {exercise.protocol_name}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.exerciseDetails}>
+                <View style={styles.detailItem}>
+                  <Text style={styles.detailLabel}>Sets</Text>
+                  <Text style={styles.detailValue}>{exercise.sets}</Text>
+                </View>
+                <View style={styles.detailItem}>
+                  <Text style={styles.detailLabel}>{volumeDisplay.label}</Text>
+                  <Text style={styles.detailValue}>{volumeDisplay.value}</Text>
+                </View>
+                <View style={styles.detailItem}>
+                  <Text style={styles.detailLabel}>Rest</Text>
+                  <Text style={styles.detailValue}>{exercise.rest}</Text>
+                </View>
+              </View>
+              
+              {exercise.tempo && (
+                <View style={styles.tempoRow}>
+                  <Text style={styles.tempoLabel}>Tempo:</Text>
+                  <Text style={styles.tempoValue}>{exercise.tempo}</Text>
                 </View>
               )}
-              <TouchableOpacity
-                style={styles.swapButton}
-                onPress={() => handleSwap(exercise.id)}
-                disabled={swappingId === exercise.id}
-              >
-                {swappingId === exercise.id ? (
-                  <ActivityIndicator size="small" color="#888" />
-                ) : (
-                  <Ionicons name="swap-horizontal" size={20} color="#888" />
-                )}
-              </TouchableOpacity>
             </View>
-
-            <Text style={styles.exerciseName}>{exercise.name}</Text>
-
-            <View style={styles.exerciseDetails}>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Load</Text>
-                <Text style={styles.detailValue}>{exercise.load_level}</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Protocol</Text>
-                <Text style={styles.detailValue}>{exercise.protocol}</Text>
-              </View>
-            </View>
-
-            <View style={styles.exerciseDetails}>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Sets</Text>
-                <Text style={styles.detailValue}>{exercise.sets}</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Reps</Text>
-                <Text style={styles.detailValue}>{exercise.reps}</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Rest</Text>
-                <Text style={styles.detailValue}>{exercise.rest}</Text>
-              </View>
-            </View>
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
 
       {/* Action Buttons */}
@@ -487,6 +582,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
+  protocolLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 2,
+  },
+  protocolValue: {
+    color: '#4ADE80',
+    textDecorationLine: 'underline',
+  },
+  tempoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#2a2a2a',
+  },
+  tempoLabel: {
+    color: '#666',
+    fontSize: 11,
+  },
+  tempoValue: {
+    color: '#F59E0B',
+    fontSize: 13,
+    fontWeight: '600',
+  },
   actionBar: {
     position: 'absolute',
     bottom: 0,
@@ -529,5 +652,51 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    maxWidth: 340,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 12,
+  },
+  modalTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  modalDescription: {
+    color: '#aaa',
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 20,
+  },
+  modalCloseButton: {
+    backgroundColor: '#4ADE80',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  modalCloseText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
