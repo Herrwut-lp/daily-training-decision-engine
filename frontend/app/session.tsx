@@ -93,13 +93,17 @@ export default function SessionScreen() {
   const dayTypeStyle = getDayTypeStyle(currentSession.day_type);
 
   const handleReroll = async () => {
-    if (!lastQuestionnaire) return;
+    if (!lastQuestionnaire || !currentSession) return;
     setLoading(true);
     try {
       const response = await fetch(`${BACKEND_URL}/api/reroll`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(lastQuestionnaire),
+        body: JSON.stringify({
+          questionnaire: lastQuestionnaire,
+          preserve_day_type: currentSession.day_type,
+          preserve_priority_bucket: currentSession.priority_bucket,
+        }),
       });
       const session = await response.json();
       setCurrentSession(session);
