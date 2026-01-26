@@ -153,11 +153,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Swaps exercise within same bucket using allowed alternatives"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/swap correctly swaps exercises within same category. Returns different exercise from same bucket with proper protocol and load level."
 
   - task: "Complete Session API"
     implemented: true
@@ -165,11 +168,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Advances rotation, handles feedback, decrements cooldown"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/complete advances priority bucket rotation correctly (squat->pull->hinge->push). 'not_good' feedback sets cooldown_counter=2. 'good' feedback decrements cooldown. Session completion tracking works."
 
   - task: "Benchmarks API"
     implemented: true
@@ -177,11 +183,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "low"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "GET/PUT endpoints for user benchmarks"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/benchmarks returns benchmark structure. PUT /api/benchmarks updates user benchmarks correctly (press_bell_kg, pushup_max, pullup_max, available_bells_minimal)."
 
   - task: "Settings API"
     implemented: true
@@ -189,11 +198,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "low"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Updates week mode and power frequency settings"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: PUT /api/settings updates week_mode (A/B) and power_frequency (weekly/fortnightly) correctly. Settings persist in user state."
 
 frontend:
   - task: "Questionnaire Screen"
