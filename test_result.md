@@ -209,39 +209,48 @@ backend:
 
   - task: "Prescription Types & Protocol System"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented prescription types (KB_STRENGTH, BW_DYNAMIC, ISOMETRIC_HOLD, CARRY_TIME, CRAWL_TIME, POWER_SWING) with deterministic protocol assignment. Each exercise has prescription_type. Session output includes correct fields based on type (reps for strength/dynamic, hold_time for isometric, time for carry/crawl)."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/protocols returns 19 protocols with required fields (id, name, prescription_type, description_short). POST /api/generate returns exercises with prescription_type field and correct output fields: KB_STRENGTH/BW_DYNAMIC/POWER_SWING have reps, ISOMETRIC_HOLD has hold_time (not reps), CARRY_TIME/CRAWL_TIME have time (not reps). Protocol fields (protocol_id, protocol_name, protocol_description) are present in all exercises."
 
   - task: "Cooldown Override Toggle"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added cooldown_override field to UserState. When ON, determine_day_type bypasses cooldown_counter for day type decisions. Auto-resets to OFF when real cooldown triggers happen (pain present, bad feeling/sleep, not_good feedback). PUT /api/settings endpoint updated to accept cooldown_override."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: PUT /api/settings accepts cooldown_override true/false. GET /api/state returns cooldown_override field. When cooldown_counter > 0 AND cooldown_override: false → day_type is 'easy'. When cooldown_counter > 0 AND cooldown_override: true → day_type can be 'medium' or 'hard' (with great feeling/sleep/no pain). Auto-reset works: cooldown_override resets to false when POST /api/generate with bad conditions OR POST /api/complete with 'not_good' feedback."
 
   - task: "Reroll Preserves Constraints"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Reroll endpoint now accepts preserve_day_type and preserve_priority_bucket. Same day_type, equipment, time slot, and priority bucket are maintained. Only exercise expressions change."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/reroll with new request format (questionnaire, preserve_day_type, preserve_priority_bucket) works correctly. Rerolled session preserves same day_type and priority_bucket as specified. Exercises change between rerolls while maintaining constraints. Multiple rerolls produce exercise variations as expected."
 
 frontend:
   - task: "Questionnaire Screen"
