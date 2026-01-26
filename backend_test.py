@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
 Backend API Testing for Daily Training Decision Engine
-Tests all backend APIs with comprehensive scenarios
+Tests the new features: Prescription Types, Cooldown Override, and Reroll Constraints
 """
 
 import requests
 import json
 import sys
+import time
 from datetime import datetime
 from typing import Dict, Any, List
 
