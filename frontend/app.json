@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "dailytraining",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.dailytraining.engine"
@@ -17,7 +17,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0a0a0a"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.dailytraining.engine"
     },
     "web": {
