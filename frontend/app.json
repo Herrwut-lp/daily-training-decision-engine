@@ -30,6 +30,7 @@
       "expo-web-browser"
     ],
     "splash": {
+      "image": "./assets/images/splash-image.png",
       "backgroundColor": "#0a0a0a",
       "resizeMode": "contain"
     },
