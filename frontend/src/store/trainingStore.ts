@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://training-program.barney-lab.xyz';
 
 interface Exercise {
   id: string;
