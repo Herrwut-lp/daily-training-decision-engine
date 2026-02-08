@@ -308,6 +308,24 @@ export default function SettingsScreen() {
               </View>
             </View>
           </View>
+
+          {/* Admin Link */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Administration</Text>
+            <TouchableOpacity 
+              style={styles.adminButton}
+              onPress={() => router.push('/admin')}
+            >
+              <View style={styles.adminButtonContent}>
+                <Ionicons name="settings-sharp" size={24} color="#F59E0B" />
+                <View style={styles.adminButtonText}>
+                  <Text style={styles.adminButtonTitle}>Admin Panel</Text>
+                  <Text style={styles.adminButtonHint}>Manage exercises & protocols</Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#666" />
+            </TouchableOpacity>
+          </View>
         </ScrollView>
 
         {/* Save Button */}
