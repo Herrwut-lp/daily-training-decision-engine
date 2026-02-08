@@ -1104,7 +1104,7 @@ async def update_exercise(exercise_id: str, updates: ExerciseUpdate, x_admin_tok
     if update_dict:
         await db.exercises.update_one({"id": exercise_id}, {"$set": update_dict})
     
-    updated = await db.exercises.find_one({"id": exercise_id})
+    updated = await db.exercises.find_one({"id": exercise_id}, {"_id": 0})
     return {"success": True, "exercise": updated}
 
 @api_router.delete("/admin/exercises/{exercise_id}")
@@ -1178,7 +1178,7 @@ async def assign_protocols_to_exercise(exercise_id: str, protocol_ids: List[str]
         {"$set": {"custom_protocols": protocol_ids}}
     )
     
-    updated = await db.exercises.find_one({"id": exercise_id})
+    updated = await db.exercises.find_one({"id": exercise_id}, {"_id": 0})
     return {"success": True, "exercise": updated}
 
 @api_router.post("/admin/seed")
