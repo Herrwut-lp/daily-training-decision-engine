@@ -7,11 +7,18 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - MONGO_URL=${MONGO_URL}
+      - MONGO_URL=mongodb://mongo:27017
       - DB_NAME=training_engine
+    depends_on:
+      - mongo
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/api/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+
+  mongo:
+    image: mongo:7
+    container_name: training-engine-mongo
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
