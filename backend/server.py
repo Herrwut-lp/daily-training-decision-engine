@@ -1147,7 +1147,7 @@ async def update_protocol(protocol_id: str, updates: ProtocolUpdate, x_admin_tok
     if update_dict:
         await db.protocols.update_one({"id": protocol_id}, {"$set": update_dict})
     
-    updated = await db.protocols.find_one({"id": protocol_id})
+    updated = await db.protocols.find_one({"id": protocol_id}, {"_id": 0})
     return {"success": True, "protocol": updated}
 
 @api_router.delete("/admin/protocols/{protocol_id}")
