@@ -559,7 +559,7 @@ async def update_user_state(updates: dict):
 
 async def get_benchmarks() -> Benchmarks:
     """Get or create benchmarks"""
-    bench = await db.benchmarks.find_one({"id": "benchmarks"})
+    bench = await db.benchmarks.find_one({"id": "benchmarks"}, {"_id": 0})
     if bench:
         return Benchmarks(**bench)
     new_bench = Benchmarks()
