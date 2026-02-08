@@ -854,19 +854,19 @@ async def root():
 @api_router.get("/exercises")
 async def get_exercises():
     """Get all exercises in the library"""
-    exercises = await db.exercises.find({}).to_list(1000)
+    exercises = await db.exercises.find({}, {"_id": 0}).to_list(1000)
     return exercises
 
 @api_router.get("/exercises/{category}")
 async def get_exercises_by_category(category: str):
     """Get exercises by category"""
-    exercises = await db.exercises.find({"category": category}).to_list(100)
+    exercises = await db.exercises.find({"category": category}, {"_id": 0}).to_list(100)
     return exercises
 
 @api_router.get("/protocols")
 async def get_protocols():
     """Get all protocol definitions"""
-    protocols = await db.protocols.find({}).to_list(100)
+    protocols = await db.protocols.find({}, {"_id": 0}).to_list(100)
     return protocols
 
 @api_router.get("/protocols/{protocol_id}")
