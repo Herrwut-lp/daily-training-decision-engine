@@ -532,17 +532,17 @@ async def seed_database():
 
 async def get_exercise_library() -> Dict[str, dict]:
     """Get all exercises from database"""
-    exercises = await db.exercises.find({}).to_list(1000)
+    exercises = await db.exercises.find({}, {"_id": 0}).to_list(1000)
     return {ex["id"]: ex for ex in exercises}
 
 async def get_protocol_library() -> Dict[str, dict]:
     """Get all protocols from database"""
-    protocols = await db.protocols.find({}).to_list(1000)
+    protocols = await db.protocols.find({}, {"_id": 0}).to_list(1000)
     return {proto["id"]: proto for proto in protocols}
 
 async def get_user_state() -> UserState:
     """Get or create user state"""
-    state = await db.user_state.find_one({"id": "user_state"})
+    state = await db.user_state.find_one({"id": "user_state"}, {"_id": 0})
     if state:
         return UserState(**state)
     new_state = UserState()
