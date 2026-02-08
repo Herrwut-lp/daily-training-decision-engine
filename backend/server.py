@@ -1045,7 +1045,7 @@ async def complete_session(feedback: SessionFeedback):
 async def get_session_history(limit: int = 10):
     """Get recent session history"""
     sessions = await db.sessions.find(
-        {"completed": True}
+        {"completed": True}, {"_id": 0}
     ).sort("timestamp", -1).limit(limit).to_list(limit)
     
     return sessions
