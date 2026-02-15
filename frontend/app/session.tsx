@@ -73,6 +73,10 @@ export default function SessionScreen() {
     description: string;
   } | null>(null);
 
+  // Completion modal state
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [completionFeedback, setCompletionFeedback] = useState<'good' | 'not_good' | null>(null);
+
   if (!currentSession) {
     return (
       <SafeAreaView style={styles.container}>
