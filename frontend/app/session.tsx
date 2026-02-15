@@ -155,15 +155,22 @@ export default function SessionScreen() {
           feedback: feedback,
         }),
       });
-      setCurrentSession(null);
-      setOverrideBucket(null); // Clear any manual focus override
-      await fetchUserState(); // Refresh user state for home screen
-      router.replace('/');
+      setCompletionFeedback(feedback);
+      setShowCompletionModal(true);
     } catch (error) {
       console.error('Error completing session:', error);
+      Alert.alert('Error', 'Failed to save session. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCompletionDismiss = async () => {
+    setShowCompletionModal(false);
+    setCurrentSession(null);
+    setOverrideBucket(null);
+    await fetchUserState();
+    router.replace('/');
   };
 
   const handleDiscard = () => {
