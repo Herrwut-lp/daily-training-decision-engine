@@ -279,6 +279,56 @@ export default function SessionScreen() {
         </TouchableOpacity>
       </Modal>
 
+      {/* Completion Celebration Modal */}
+      <Modal
+        visible={showCompletionModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={handleCompletionDismiss}
+      >
+        <View style={styles.completionOverlay}>
+          <View style={styles.completionContent}>
+            <View style={styles.completionIconContainer}>
+              <Ionicons 
+                name={completionFeedback === 'good' ? 'trophy' : 'fitness'} 
+                size={80} 
+                color={completionFeedback === 'good' ? '#F59E0B' : '#4ADE80'} 
+              />
+            </View>
+            <Text style={styles.completionTitle}>
+              {completionFeedback === 'good' ? 'Great Work!' : 'Session Complete'}
+            </Text>
+            <Text style={styles.completionSubtitle}>
+              {completionFeedback === 'good' 
+                ? 'You crushed it today. Keep up the momentum!'
+                : 'Rest up and come back stronger. Recovery is part of the process.'}
+            </Text>
+            <View style={styles.completionStats}>
+              <View style={styles.completionStatItem}>
+                <Text style={styles.completionStatValue}>{exercises.length}</Text>
+                <Text style={styles.completionStatLabel}>Exercises</Text>
+              </View>
+              <View style={styles.completionStatDivider} />
+              <View style={styles.completionStatItem}>
+                <Text style={styles.completionStatValue}>{currentSession?.day_type?.toUpperCase()}</Text>
+                <Text style={styles.completionStatLabel}>Intensity</Text>
+              </View>
+              <View style={styles.completionStatDivider} />
+              <View style={styles.completionStatItem}>
+                <Text style={styles.completionStatValue}>{currentSession?.time_slot}m</Text>
+                <Text style={styles.completionStatLabel}>Duration</Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.completionButton}
+              onPress={handleCompletionDismiss}
+            >
+              <Text style={styles.completionButtonText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleDiscard} style={styles.backArrow}>
