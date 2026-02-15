@@ -14,7 +14,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTrainingStore } from '../src/store/trainingStore';
 
-const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://training-program.barney-lab.xyz';
 
 const getCategoryColor = (category: string) => {
   const colors: { [key: string]: string } = {
